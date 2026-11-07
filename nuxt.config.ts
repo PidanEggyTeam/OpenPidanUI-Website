@@ -53,6 +53,13 @@ export default defineNuxtConfig({
   app: {
     head: {
       htmlAttrs: { lang: 'zh-CN' },
+      meta: [
+        {
+          name: 'keywords',
+          content:
+            'OpenPidanUI, PidanUI, Pidan UI, 皮蛋UI, EggyUI, Eggy UI, OpenEggyUI, 蛋仔UI, 蛋仔美化, 蛋仔风格美化, 蛋仔风格主题, 蛋仔风格壁纸, 蛋仔风格Windows, 主题包下载, 蛋仔派对二创, Rainmeter蛋仔组件, Windows桌面美化, 开源UI组件',
+        },
+      ],
       link: [
         { rel: 'icon', type: 'image/x-icon', href: '/images/favicon.ico' },
         // 界面字体：生产引用 sync-fonts.mjs 生成的本地样式表，开发直接挂 npm 包目录
