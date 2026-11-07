@@ -1,21 +1,54 @@
-# OpenPidanUI 官网
+<div align="center">
 
-[OpenPidanUI](https://github.com/PidanUI-Team/OpenPidanUI) 的官方网站：首页、下载、文档。
+# OpenPidanUI-Website
 
-- 框架：Nuxt 4 + Vue 3 + TypeScript（SSG，`nuxi generate`）
-- 样式：Tailwind CSS v4 + **Nuxt UI v4**（样式层全量使用，不引入 `@tailwindcss/typography`）
-- 内容：`@nuxt/content` v3（文档站，Markdown 排版走 Nuxt UI 的 Prose 组件）
-- 部署：Cloudflare Workers **Static Assets**（assets-only，没有 Worker 脚本）
-- 字体：HarmonyOS Sans SC + Cascadia Code，**仓库不存字体文件**，构建后由脚本灌注
+![Last Commit](https://img.shields.io/github/last-commit/PidanEggyTeam/OpenPidanUI-Website?label=Last%20Commit)
+[![Nuxt](https://img.shields.io/badge/Nuxt-4.6.4-00DC82?logo=Nuxt&logoColor=white)](https://nuxt.com/)
+[![Nuxt UI](https://img.shields.io/badge/Nuxt%20UI-4.12-00DC82?logo=Nuxt&logoColor=white)](https://ui.nuxt.com/)
+[![Vue](https://img.shields.io/badge/Vue-3.5.45-4FC08D?logo=Vue.js&logoColor=white)](https://cn.vuejs.org/)
+[![TypeScript](https://img.shields.io/badge/TypeScript-6.0.2-3178C6?logo=TypeScript&logoColor=white)](https://www.typescriptlang.org/)
+[![Tailwind CSS](https://img.shields.io/badge/Tailwind%20CSS-4.3.5-06B6D4?logo=tailwindcss&logoColor=white)](https://tailwindcss.com/)
+![License](https://img.shields.io/badge/License-AGPL--3.0-orange)
+[![GitHub](https://img.shields.io/badge/GitHub-PidanUI--Team-blue?logo=github&logoColor=F5F5F5)](https://github.com/PidanUI-Team)
 
-## 命令
+[OpenPidanUI](https://github.com/PidanUI-Team/OpenPidanUI) 的官方网站，使用 Nuxt 4 + @nuxt/content + Nuxt UI 4 + TypeScript + Tailwind CSS 构建，通过 `nuxi generate` 静态生成（SSG）后部署到 Cloudflare Workers 静态资源。版式与设计语言与 PidanUI 官网保持一致，组件全部模块化、可审查，不替换任何系统文件。
+
+开发约定（目录结构、样式分层、内容与数据文件的维护方式）见 [AGENTS.md](AGENTS.md)。
+
+</div>
+
+## 网站结构
+
+版式是「顶栏 → 内容 → 底栏」三段式，全站只有 window 一条滚动条：顶栏吸顶常驻，导航在 1024px 以下收进顶栏下方下拉面板；底栏承担站点导航、社交渠道与友情链接。
+
+- **首页**：`/`，左文右图的 Hero（项目名 / 简介 / 下载与文档按钮 + 宣传图）→ 温馨提示 → 项目特性 → 组件展示（可左右切换的截图轮播）→ 关于 OpenPidanUI（名称沿革时间线）→ 加入开发。
+- **下载**：`/download`，页面头部是标题与说明，下方每个版本一张卡片（版本信息 + 资产清单），版本数据在构建期从 GitHub Releases 拉取。
+- **文档**：`/docs`，左侧文章条目侧边栏、右侧正文的技术文档风格；分类页 `/docs/category/<分类名>` 与文章页 `/docs/<分类>/<文章>`。Markdown 排版走 Nuxt UI 的 Prose 组件。
+- **新闻**：顶栏外链到 `<https://pidanui.eggycore.top/posts/>`，本站不实现该页面（导航项带 ↗ 图标）。
+- **404**：`/404.html`，预渲染产物里的兜底页。
+
+## 技术栈
+
+- [Nuxt 4](https://nuxt.com/)（Nitro 预渲染 + SSG，`nitro.prerender.failOnError: true`）
+- [@nuxt/content v3](https://content.nuxt.com/)（文档内容库，MDC + Shiki 双主题）
+- [Nuxt UI 4](https://ui.nuxt.com/)（组件层：`UHeader` / `UFooter` / `UPageHero` / `UPageSection` / `UPageCard` / `UPageHeader` / `UContentNavigation` / `UContentToc` / `USwitch` 等，主题色映射到站点品牌黄）
+- [TypeScript](https://www.typescriptlang.org/)（`typescript.strict: true`）
+- [Tailwind CSS v4](https://tailwindcss.com/)（`@theme` 设计令牌 + 工具类，**启用 Preflight**）
+- [@nuxt/icon](https://nuxt.com/modules/icon)（随 Nuxt UI 内置，Lucide + Simple Icons，构建期内联为 SVG）
+
+## 构建步骤
+
+1. [下载并安装 Node.js](https://nodejs.org/zh-cn)（建议 22 LTS）
+2. 安装 `pnpm`：`npm install -g pnpm`（`pnpm --version` 可验证）
+3. 在项目文件夹下执行 `pnpm install`
+4. `pnpm dev` 启动开发服务器（默认 `http://localhost:3000`）
+5. `pnpm build` 生成静态产物，输出在 **`.output/public`**
 
 ```bash
-pnpm install
-pnpm dev        # 本地开发
 pnpm build      # nuxi generate + 注入字体 + 产物校验
 pnpm preview    # wrangler dev，按 Cloudflare 的规则跑静态产物
 pnpm deploy     # 构建 + wrangler deploy
+pnpm format:check
 ```
 
 `pnpm build` 里那两步不要省：
@@ -23,61 +56,36 @@ pnpm deploy     # 构建 + wrangler deploy
 - `scripts/sync-fonts.mjs`：把 HarmonyOS Sans SC 的分包字体复制进 `.output/public/fonts/`；
 - `scripts/verify-output.mjs`：逐条校验 `build/routes.ts` 的路由都有产物（`failOnError` 抓不到漏页）。
 
-## 目录约定
+> [!TIP]
+> 如果 `npm install` 安装较慢，可先执行 `npm config set registry https://registry.npmmirror.com` 切换至镜像源。
 
-```
-app/
-  pages/            路由；页面文件只做「SEO + 渲染视图」
-  components/       按文件名注册（pathPrefix: false），home/ docs/ download/ 分组
-  layouts/          default
-  composables/      useDocsGroups / useReleases / useNav / useScrollReveal
-  data/             nav、社交、友链、首页文案、轮播数据、文档分类
-  assets/styles/    main.css 的五条 @import 顺序固定
-content/docs/       文档正文，数字前缀决定路径与排序
-build/routes.ts     预渲染路由唯一入口
-server/routes/      构建期接口（/api/releases.json）
-shared/             站点常量、Release 数据模型、离线快照
-scripts/            字体灌注、产物校验
-```
+## 字体与图标
 
-## 几条硬约束
+字体为 HarmonyOS Sans SC（400 / 500 / 700 三个字重，按 unicode-range 分片）和 Cascadia Code 分包字体，**仓库不保留字体文件**：构建后由 `scripts/sync-fonts.mjs` 把字体灌注进产物，Cascadia Code 走 `@fontsource` 由 Vite 处理。回退链定义见 `app/assets/styles/base.css` 的 `--font-ui` / `--font-code`。
 
-1. **站内链接一律 `<NuxtLink :to>` + `withBase()`**，不要裸 `<a href>`。
-2. **新增页面必须登记 `build/routes.ts`**，否则产物里根本没有这一页。
-3. **动态绑定的图标必须登记 `nuxt.config.ts` 的 `icon.clientBundle.icons`**，否则静态站运行时会去 Iconify API 取图。
-4. **自有 CSS 全部写进 `@layer base/components`**，不写未分层规则（否则会压掉工具类）。
-5. **移动端导航用顶栏下方面板**，不用 Drawer；断点只用 Tailwind 默认阶梯。
-6. 构建必须零错误；`prerender.failOnError: true`。
+图标使用随 Nuxt UI 内置的 `@nuxt/icon`（Lucide + Simple Icons），图标集以 `@iconify-json/*` 本地安装，**构建期直接内联为 SVG**（`app.config.ts` 里 `icon.mode: 'svg'`），运行时不请求 Iconify API。动态 `:name` 绑定的图标必须在 `nuxt.config.ts` 的 `icon.clientBundle.icons` 里登记。
 
-## 文档的分类与排序
+## 关于 OpenPidanUI
 
-每篇 `.md` 的 frontmatter 带两个必填字段：
+OpenPidanUI 是 PidanUI 的辅助组件开源代码库，存放系统镜像、独立美化包所需的配套组件源代码（Rainmeter 小组件、设置程序、部署脚本等）。
 
-```yaml
----
-title: 安装 Rainmeter
-description: 一句话摘要，会出现在卡片和 SEO 里
-category: 用户文档      # 自由命名，同名即同组（中文也可以）
-order: 1               # 分类内的显示序号：侧边栏 / 分类页 / 上下篇都按它
-categoryOrder: 1       # 分类之间的权重，小的在前；不填按分类名排序
----
-```
+它不负责替换系统文件，也不做持久化的系统改动——美化交给主题包与 Rainmeter，出问题切回默认主题就能恢复。组件按模块独立发布、独立更新，与主项目同步迭代。
 
-分类**不需要预先登记**：写一个新的 `category` 值，站点就会自动多出一个分类和
-`/docs/category/<分类名>` 页面（`build/routes.ts` 从 frontmatter 收集）。
+## 部署方式
 
-想给某个分类配图标 / 描述 / 强制排序，再去 `app/data/docsCategories.ts` 的
-`DOC_CATEGORY_PRESENTATION` 里加一条即可；没配的分类走默认图标与通用描述。
-
-## 下载数据
-
-版本信息在**构建期**从 GitHub Releases（`PidanUI-Team/OpenPidanUI`）拉取，归一化后预渲染成 `/api/releases.json`，
-访问端零请求。拉取失败时回退到 `shared/data/releases.snapshot.json`，页面会显示「快照」提示。
-发版后需要重新构建一次本站。
+本网站部署于 **Cloudflare Workers Static Assets**（assets-only，没有 Worker 脚本），通过静态托管的方式对外提供服务。`wrangler.jsonc` 里固定了资产目录与 SPA 以外的路由行为，执行 `pnpm deploy` 即完成「构建 → 上传 → 部署」。站点没有后端，所有内容以静态资源形式存在，更新时需重新构建并推送。
 
 ## 许可证
 
-本站代码以 **AGPL-3.0** 授权（见 [LICENSE](LICENSE)）。项目简介、截图等品牌素材版权归 PidanEggyTeam / PidanUI 项目组所有。
-本项目为《蛋仔派对》同人创作，非官方出品，与网易游戏、微软无隶属或赞助关系。
+本项目采用 **AGPL v3** 许可证，详见 [LICENSE](LICENSE)。
+
+**禁止商业用途。** 任何个人或组织不得将本项目及其衍生作品用于商业目的。使用、修改、分发本项目时，请遵守 AGPL v3 的相关条款。
+
+## 版权声明
+
+- 本项目为《蛋仔派对》粉丝二次创作，非官方出品，禁止用于商业用途。
+- 所有视觉素材均来自合规渠道或团队重绘，未使用游戏拆包/解包资源。
+- 《蛋仔派对》是网易游戏的注册商标，Windows 是微软公司的注册商标。
+- 本项目与网易、微软无任何隶属或赞助关系。
 
 规划文档见 [docs/WEBSITE-PLAN.md](docs/WEBSITE-PLAN.md)。
