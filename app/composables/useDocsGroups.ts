@@ -47,7 +47,9 @@ export async function useDocsGroups() {
 
   const entries = computed<DocEntry[]>(() =>
     (data.value as DocEntry[])
-      .filter(entry => entry.path !== '/docs')
+      // 排除两个位置：/docs 概览本身，以及 /docs/<组> 这种「分类首页」——
+      // 后者由分类页承担，混在列表里会多出一行「0 用户文档」的怪东西
+      .filter(entry => entry.path !== '/docs' && !/^\/docs\/[^/]+$/.test(entry.path))
       .map(entry => ({ ...entry, categoryOrder: entry.categoryOrder ?? 999 }))
       .sort((a, b) => a.order - b.order),
   )
