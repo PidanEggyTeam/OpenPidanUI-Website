@@ -7,11 +7,24 @@
 // 滚动入场以此为层级基准（见 useScrollReveal）。
 // ============================================================
 const nuxtApp = useNuxtApp();
+const {
+  progress,
+  active: progressActive,
+  done: progressDone,
+  completeRendering,
+  start,
+  markPageLoaded,
+} = usePageProgress();
 
-// 新页 DOM 已就绪：重新给区块打标，让视口外的块滚动时才淡入。
+const offLoadingStart = nuxtApp.hook('page:loading:start', () => start(false));
+const offLoadingEnd = nuxtApp.hook('page:loading:end', () => markPageLoaded());
+
+// 新页 DOM 已就绪：让进度条等字体 / 图片就绪后收尾，并重新给区块打标，
+// 让视口外的块滚动时才淡入。
 // 用异步补刷而不是立即执行 —— 从页面中部跳转时，新页的滚动回顶发生在
 // 这一帧之后；立刻量尺寸会把所有块误判成「已在视口上方」而跳过动画。
 const offPageFinish = nuxtApp.hook('page:finish', () => {
+  completeRendering();
   scheduleScrollRevealRefresh();
 });
 
@@ -23,13 +36,21 @@ const offTransitionFinish = nuxtApp.hook('page:transition:finish', () => {
 // 全站区块的滚动入场（首屏交错 + 视口外按需淡入）
 useScrollReveal();
 
+onMounted(() => {
+  completeRendering();
+});
+
 onBeforeUnmount(() => {
+  offLoadingStart();
+  offLoadingEnd();
   offPageFinish();
   offTransitionFinish();
 });
 </script>
 
 <template>
+  <PageProgress :progress="progress" :active="progressActive" :done="progressDone" />
+
   <!-- 纵向三段式：顶栏 sticky、主区撑满剩余高度、底栏留在文档流末尾 -->
   <div class="flex min-h-dvh flex-col">
     <SiteHeader />

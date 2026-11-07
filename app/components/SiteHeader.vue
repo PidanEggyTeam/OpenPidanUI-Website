@@ -16,7 +16,8 @@ const menuItems = computed(() =>
     to: item.external ? item.href : withBase(item.href),
     target: item.external ? '_blank' : undefined,
     rel: item.external ? 'noopener noreferrer' : undefined,
-    trailingIcon: item.external ? (item.trailingIcon ?? 'i-lucide-arrow-up-right') : undefined,
+    // 外链的 ↗ 由 UNavigationMenu 的 externalIcon 自动补（target=_blank 时渲染），
+    // 这里不要再传 trailingIcon，否则会出现两个箭头
     // 外链永不参与高亮
     active: !item.external && activeKey.value === item.key,
   })),

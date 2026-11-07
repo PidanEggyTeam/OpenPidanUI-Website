@@ -106,7 +106,7 @@ export default defineNuxtConfig({
         'lucide:moon',
         'lucide:menu',
         'lucide:x',
-        'lucide:github',
+        'lucide:folder-git-2',
         'lucide:package',
         'lucide:sparkles',
         'lucide:shield-check',
