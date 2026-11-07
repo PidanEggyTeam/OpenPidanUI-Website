@@ -27,7 +27,8 @@ jobs:
       - name: Format check
         run: pnpm format:check
 
-      - name: Build（含产物校验，能同时抓出漏页与坏链接）
+      # 构建同时跑产物校验：能抓出漏页与坏链接
+      - name: Build
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: pnpm build
