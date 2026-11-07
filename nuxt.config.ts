@@ -1,5 +1,5 @@
-import tailwindcss from '@tailwindcss/vite'
-import { buildRoutes } from './build/routes'
+import tailwindcss from '@tailwindcss/vite';
+import { buildRoutes } from './build/routes';
 
 export default defineNuxtConfig({
   compatibilityDate: '2026-11-01',
@@ -34,7 +34,17 @@ export default defineNuxtConfig({
         { rel: 'icon', type: 'image/x-icon', href: '/images/favicon.ico' },
         { rel: 'stylesheet', href: '/fonts/harmonyos.css' },
       ],
+      script: [
+        // 首帧同步脚本：DOM 解析时立即给 <html> 加 .js。
+        // 禁用 JS 时此脚本不执行，动画标记一个都不会打，内容照常可读。
+        {
+          innerHTML: 'document.documentElement.classList.add("js");',
+          tagPriority: 'critical',
+        },
+      ],
     },
+    // 保住 .page-enter-from / .page-leave-to 等类名（见 animation.css）
+    pageTransition: { name: 'page', mode: 'out-in', appear: true },
   },
 
   content: {
@@ -49,7 +59,23 @@ export default defineNuxtConfig({
             default: 'github-light',
             dark: 'github-dark',
           },
-          langs: ['bash', 'bat', 'powershell', 'json', 'jsonc', 'ts', 'js', 'vue', 'csharp', 'xml', 'ini', 'md', 'yaml', 'css', 'diff'],
+          langs: [
+            'bash',
+            'bat',
+            'powershell',
+            'json',
+            'jsonc',
+            'ts',
+            'js',
+            'vue',
+            'csharp',
+            'xml',
+            'ini',
+            'md',
+            'yaml',
+            'css',
+            'diff',
+          ],
         },
       },
     },
@@ -120,7 +146,7 @@ export default defineNuxtConfig({
   hooks: {
     'prerender:routes'(ctx) {
       for (const route of buildRoutes()) {
-        ctx.routes.add(route)
+        ctx.routes.add(route);
       }
     },
   },
@@ -132,4 +158,4 @@ export default defineNuxtConfig({
   typescript: {
     strict: true,
   },
-})
+});

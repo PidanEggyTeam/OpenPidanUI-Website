@@ -1,42 +1,84 @@
-/* 两类动效：页面切换 + 滚动入场。全部有 prefers-reduced-motion 分支。 */
+/* ============================================================
+   全站动效（与 PidanUI 官网同款）
+     1. 页面切换：旧页向下淡出后，新页向上淡入
+        （Layout 使用 Vue Transition 的 out-in 模式顺序执行）
+     2. 内容入场：区块进入视口时淡入上浮
+        （useScrollReveal 打 data-reveal 标记，同屏块交错 80ms）
+   全部遵循系统「减少动态效果」偏好：减少动效时一个标记都不打，
+   元素保持默认可见。
+   ============================================================ */
 
+/* ---- 页面切换 ---- */
 .page-enter-active,
 .page-leave-active {
-  transition: opacity 0.18s ease;
+  will-change: opacity, transform;
 }
 
-.page-enter-from,
+.page-enter-active {
+  transition:
+    opacity 0.46s cubic-bezier(0.22, 1, 0.36, 1),
+    transform 0.46s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.page-leave-active {
+  transition:
+    opacity 0.3s cubic-bezier(0.4, 0, 0.2, 1),
+    transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.page-enter-from {
+  opacity: 0;
+  transform: translate3d(0, -18px, 0) scale(0.99);
+}
+
 .page-leave-to {
   opacity: 0;
+  transform: translate3d(0, 16px, 0) scale(0.99);
 }
 
-[data-reveal] {
-  opacity: 0;
-  transform: translateY(28px);
-  transition:
-    opacity 0.7s cubic-bezier(0.22, 1, 0.36, 1),
-    transform 0.7s cubic-bezier(0.22, 1, 0.36, 1);
-  transition-delay: var(--reveal-delay, 0ms);
-}
+/* ---- 内容入场（滚动 reveal） ----
+   层级：.page-shell（UContainer）> 视图根节点 > 区块。
+   由 useScrollReveal 打标：视口外的块先 data-reveal="hidden"，
+   进入视口后改成 "shown" 触发动画；同屏块靠 --reveal-delay 错开。
 
-[data-reveal='in'] {
-  opacity: 1;
-  transform: none;
-}
-
-@media (prefers-reduced-motion: reduce) {
-  html {
-    scroll-behavior: auto;
+   只在 html.js 下生效：禁用 JS 时一个标记都不会出现，内容照常可读。
+   用 animation + backwards 而不是 transition：动画结束后不保留
+   transform，区块不会永久成为 fixed 后代的包含块。 */
+@keyframes reveal-up {
+  from {
+    opacity: 0;
+    transform: translateY(28px) scale(0.98);
   }
 
-  .page-enter-active,
-  .page-leave-active {
-    transition: none;
-  }
-
-  [data-reveal] {
+  to {
     opacity: 1;
     transform: none;
-    transition: none;
+  }
+}
+
+html.js [data-reveal='hidden'] {
+  opacity: 0;
+  transform: translateY(28px) scale(0.98);
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  html.js [data-reveal='shown'] {
+    animation: reveal-up 700ms var(--ease-out-soft) backwards;
+    animation-delay: var(--reveal-delay, 0ms);
+  }
+}
+
+/* ---- 减少动态效果 ---- */
+@media (prefers-reduced-motion: reduce) {
+  .page-enter-active,
+  .page-leave-active {
+    transition-duration: 0s;
+  }
+
+  /* 运行中把系统偏好切成「减少动效」时，上面的标记已经打下去了：
+     这里用同样特异性（html.js）在文件末尾覆盖回可见。 */
+  html.js [data-reveal='hidden'] {
+    opacity: 1;
+    transform: none;
   }
 }

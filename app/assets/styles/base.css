@@ -1,96 +1,254 @@
-/* 颜色与字体的唯一真值。深色两组必须逐字一致（一份给显式 [data-theme]，一份给 system 跟随）。 */
+/* ============================================================
+   OpenPidanUI 官网 · 基础层
+   ------------------------------------------------------------
+   与 PidanUI 官网 / 冷域观者站同一套设计语言。
+   主题 CSS 变量（浅色 / 深色）—— 全站唯一的主题源。
+   模式由 Nuxt UI 的 colorMode 驱动（@nuxtjs/color-mode 在 <html>
+   上写 .dark / .light），token 选择器因此以 .dark 为主，
+   同时保留历史写法 [data-theme='dark'] 以防外部切换脚本。
+   ============================================================ */
+
 :root {
+  color-scheme: light;
+
+  /* 顶栏高度：UHeader 与锚点 / 代码块 sticky 偏移共用同一个源 */
+  --shell-header-h: var(--ui-header-height, 4rem);
+
+  /* 字体栈：全站唯一来源。HarmonyOS Sans SC 由 scripts/sync-fonts.mjs 自包含，
+     Cascadia Code 由 @fontsource 走 Vite。 */
+  --font-ui:
+    'HarmonyOS Sans SC', 'PingFang SC', 'Microsoft YaHei', system-ui, -apple-system, 'Segoe UI',
+    Roboto, sans-serif;
+  --font-code:
+    'Cascadia Code', 'Consolas', 'Menlo', 'HarmonyOS Sans SC', 'Microsoft YaHei UI', 'PingFang SC',
+    monospace;
+
   --brand: #ffc53d;
   --brand-deep: #ff9f1a;
   --brand-soft: #fff7e0;
-  --brand-grad: linear-gradient(100deg, #ffc53d 0%, #ff9f1a 55%, #ff7a1a 100%);
-
-  --font-ui: 'HarmonyOS Sans SC', 'PingFang SC', 'Microsoft YaHei', system-ui, -apple-system, 'Segoe UI', sans-serif;
-  --font-code: 'Cascadia Code', 'Cascadia Mono', Consolas, 'Liberation Mono', monospace;
-
-  --bg: #fafbfc;
-  --card: #ffffff;
-  --line: #f0f1f3;
-
+  --brand-grad: linear-gradient(135deg, #ffc53d 0%, #ff9f1a 60%);
+  /* 不随主题切换的品牌色字面值（渐变 / 阴影 / 引用条等） */
+  --brand-static: #ffc53d;
   --ink: #1d2129;
   --ink-2: #4e5969;
   --ink-3: #86909c;
+  --bg: #fafbfc;
+  --card: #ffffff;
+  --line: #f0f1f3;
+  /* 代码块 / 行内代码（暖色调，与品牌黄保持一致） */
+  --code-bg: #f8f7f3;
+  --code-hd: #f0ede5;
+  --inline-code-bg: rgba(255, 197, 61, 0.18);
+  --inline-code-ink: #a85a00;
 
-  --shell-header-h: 64px;
-
+  /* ---- Nuxt UI 语义变量对齐 ----
+     值与站点令牌同源：深色无需再写第二份（下面的 token 自己会翻转）。 */
+  --ui-radius: var(--radius-m);
+  --ui-container: 1400px;
+  /* primary 用 --brand-deep(#ff9f1a) 而不是 --brand(#ffc53d)：
+     #ffc53d 在白底上做文字几乎看不清（徽章、胶囊按钮会发白）。 */
   --ui-primary: var(--brand-deep);
-  --ui-bg: var(--bg);
-  --ui-bg-muted: #f4f5f7;
-  --ui-bg-elevated: var(--card);
-  --ui-border: var(--line);
   --ui-text: var(--ink);
+  --ui-text-toned: var(--ink-2);
   --ui-text-muted: var(--ink-2);
   --ui-text-dimmed: var(--ink-3);
+  --ui-text-highlighted: var(--ink);
+  --ui-bg: var(--card);
+  --ui-bg-muted: var(--bg);
+  --ui-bg-elevated: var(--card);
+  --ui-bg-accented: var(--line);
+  --ui-border: var(--line);
+  --ui-border-muted: var(--line);
+  --ui-border-accented: var(--color-brand-deep-a20);
+
+  /* ---- 缓动曲线：与页面过渡（animation.css）同一条曲线 ---- */
+  --ease-out-soft: cubic-bezier(0.22, 1, 0.36, 1);
+  --ease-inout: cubic-bezier(0.4, 0, 0.2, 1);
+  /* Nuxt UI 的 collapsible / accordion / modal 动画都写成
+     `animation: … 200ms var(--ease-out)`，必须补上别名，否则整条简写无效。 */
+  --ease-out: var(--ease-out-soft);
+  --ease-in-out: var(--ease-inout);
+
+  /* ---- 浮层遮罩：抽屉与弹窗共用同一套色调 ---- */
+  --overlay-tint: 12 16 24;
+  --overlay-alpha: 0.5;
+  --overlay-blur: 6px;
 }
 
-.dark {
+/* 深色：Nuxt UI colorMode 会在 <html> 上写 .dark；
+   [data-theme='dark'] 保留给外部脚本 / 旧链接。 */
+:root.dark,
+:root[data-theme='dark'] {
+  color-scheme: dark;
+  --brand: #ffc53d;
+  --brand-deep: #ff9f1a;
+  --brand-soft: #3a2e14;
+  --brand-grad: linear-gradient(135deg, #ffc53d 0%, #ff9f1a 60%);
+  --ink: #e5e6eb;
+  --ink-2: #c9cdd4;
+  --ink-3: #86909c;
   --bg: #17171a;
   --card: #1f1f23;
   --line: #2a2f36;
-
-  --ink: #f2f3f5;
-  --ink-2: #c9cdd4;
-  --ink-3: #86909c;
-
-  --brand-soft: #2a2418;
-
-  --ui-bg-muted: #232328;
-  --ui-bg-elevated: var(--card);
-  --ui-border: var(--line);
-  --ui-text: var(--ink);
-  --ui-text-muted: var(--ink-2);
-  --ui-text-dimmed: var(--ink-3);
+  /* 深色模式下代码块比卡片更深一档，形成「内嵌」层次 */
+  --code-bg: #141519;
+  --code-hd: #1b1c22;
+  --inline-code-bg: rgba(255, 197, 61, 0.14);
+  --inline-code-ink: #ffc53d;
+  /* 纯黑底 + 略高的不透明度，避免深色页面里遮罩看不出来 */
+  --overlay-tint: 0 0 0;
+  --overlay-alpha: 0.62;
 }
 
+/* ============================================================
+   全局基线
+   ------------------------------------------------------------
+   元素级默认值（margin / padding / box-sizing / 边框 / 表单控件）
+   由 main.css 引入的 Tailwind Preflight 在同一 @layer base 里提供，
+   这里只保留 Preflight 不管的四类东西：
+   1. 滚动条外观与点击高亮；2. 过渡曲线基线；
+   3. 少数需要「压过 Preflight」的项目决定；4. 正文基础排版。
+   ============================================================ */
 @layer base {
+  * {
+    /* 通用细滚动条：中性灰，不与品牌色抢注意力 */
+    scrollbar-width: thin;
+    scrollbar-color: rgba(128, 128, 128, 0.42) transparent;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  *::-webkit-scrollbar {
+    width: 10px;
+    height: 10px;
+  }
+
+  *::-webkit-scrollbar-thumb {
+    background: rgba(128, 128, 128, 0.35);
+    border: 2px solid transparent;
+    border-radius: 9999px;
+    background-clip: content-box;
+  }
+
+  *::-webkit-scrollbar-thumb:hover {
+    background: rgba(128, 128, 128, 0.55);
+  }
+
+  *::-webkit-scrollbar-track,
+  *::-webkit-scrollbar-corner {
+    background: transparent;
+  }
+
+  /* 锚点跳转 / 标题 scroll-margin 按顶栏高度让位 */
   html {
-    scroll-behavior: smooth;
+    scroll-padding-top: calc(var(--shell-header-h) + 16px);
     -webkit-text-size-adjust: 100%;
   }
 
+  /* 平滑滚动只在系统未要求「减少动态效果」时启用 */
+  @media (prefers-reduced-motion: no-preference) {
+    html {
+      scroll-behavior: smooth;
+    }
+  }
+
   body {
-    background-color: var(--bg);
-    color: var(--ink);
+    min-height: 100dvh;
     font-family: var(--font-ui);
-    /* 不能写 hidden：sticky 会失效 */
+    font-size: 15px;
+    line-height: 1.7;
+    color: var(--ink);
+    background: var(--bg);
+    /* clip 而不是 hidden：hidden 会让 body 变成滚动容器，sticky header 随之失效 */
     overflow-x: clip;
     text-rendering: optimizeLegibility;
     -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
   }
 
-  ::selection {
-    background-color: var(--brand);
-    color: #1d2129;
+  /* 小屏收紧正文（断点对齐 Tailwind 的 sm 640） */
+  @media (max-width: 640px) {
+    body {
+      font-size: 14.5px;
+    }
   }
 
-  /* 锚点跳转别被固定顶栏盖住 */
-  :where(h1, h2, h3, h4) {
-    scroll-margin-top: calc(var(--shell-header-h) + 16px);
+  a {
+    color: inherit;
+    text-decoration: none;
+  }
+
+  /* ---- 交互基线：统一过渡曲线，只过渡合成 / 绘制属性，不触发布局 ---- */
+  a,
+  button,
+  [role='button'] {
+    transition-property:
+      color, background-color, border-color, text-decoration-color, fill, stroke, opacity,
+      box-shadow;
+    transition-duration: 220ms;
+    transition-timing-function: var(--ease-out-soft);
+  }
+
+  img {
+    transition-property: transform, filter;
+    transition-duration: 450ms;
+    transition-timing-function: var(--ease-out-soft);
   }
 
   :focus-visible {
     outline: 2px solid var(--brand-deep);
     outline-offset: 2px;
+    transition-property: outline-color, box-shadow, color;
+    transition-duration: 180ms;
+  }
+
+  /* 正文选区：品牌黄半透明 */
+  ::selection {
+    background: color-mix(in srgb, var(--brand) 35%, transparent);
+  }
+
+  svg {
+    vertical-align: middle;
+    display: inline-block;
+    flex-shrink: 0;
+  }
+
+  /* 标题字重补齐：Preflight 把 h1-h6 设成 `font-weight: inherit`，
+     只写颜色不写字重的标题会掉成常规体。字号仍由页面 / prose 显式决定。 */
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    font-weight: 700;
+  }
+
+  button:not(:disabled),
+  [type='button']:not(:disabled),
+  [role='button']:not(:disabled) {
+    cursor: pointer;
   }
 }
 
+/* ============================================================
+   浮层遮罩
+   ------------------------------------------------------------
+   Nuxt UI 的遮罩默认写 bg-elevated/75，而 --ui-bg-elevated 被映射成了
+   卡片白 —— 浅色下等于盖了一层白雾。这里改用抽屉同一套遮罩令牌。
+   ============================================================ */
+[data-slot='overlay'] {
+  background-color: rgb(var(--overlay-tint) / var(--overlay-alpha));
+  backdrop-filter: blur(var(--overlay-blur));
+}
+
+/* 品牌渐变字，只对 <em> 生效 */
 @layer components {
-  /* 品牌渐变字，只对 <em> 生效 */
   .brand-gradient em {
     font-style: normal;
     background-image: var(--brand-grad);
     background-clip: text;
     -webkit-background-clip: text;
     color: transparent;
-  }
-
-  .section-shell {
-    padding-block: clamp(3rem, 6vw, 5.5rem);
   }
 
   /* shiki 双主题：Nuxt UI 的 prose 用的是 CSS 变量，这里补齐深色切换 */
