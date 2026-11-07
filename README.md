@@ -13,7 +13,7 @@
 
 [OpenPidanUI](https://github.com/PidanUI-Team/OpenPidanUI) 的官方网站，使用 Nuxt 4 + @nuxt/content + Nuxt UI 4 + TypeScript + Tailwind CSS 构建，通过 `nuxi generate` 静态生成（SSG）后部署到 Cloudflare Workers 静态资源。版式与设计语言与 PidanUI 官网保持一致，组件全部模块化、可审查，不替换任何系统文件。
 
-开发约定（目录结构、样式分层、内容与数据文件的维护方式）见 [AGENTS.md](AGENTS.md)。
+开发约定（目录结构、样式分层、内容与数据文件的维护方式）见 [.github/copilot-instructions.md](.github/copilot-instructions.md)。
 
 </div>
 
