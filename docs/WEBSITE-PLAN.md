@@ -395,7 +395,7 @@ experimental: { payloadExtraction: 'client' },
   `Accept: application/vnd.github+json`、`X-GitHub-Api-Version: 2022-11-28`、
   **`User-Agent`（Node 下不给必 403）**、可选 `Authorization: Bearer $GITHUB_TOKEN`，
   以及 `signal: AbortSignal.timeout(5000)`（墙内/断网不要卡住构建）。
-- **catch 里永不抛错**：失败就返回 `shared/data/releases.snapshot.json`（入库的一份真实数据），并标 `source: 'snapshot'`；否则 `failOnError: true` 会把一次网络抖动放大成构建失败。
+- **catch 里永不抛错**：失败就返回 `shared/data/downloads.json`（入库的一份真实数据），并标 `source: 'snapshot'`；否则 `failOnError: true` 会把一次网络抖动放大成构建失败。
 - 归一化到自定义 schema（`shared/releases.ts`），组件只认它，不泄漏 GitHub 的字段形状：
   `tag / version / name / publishedAt / publishedAtLabel（构建期格式化）/ prerelease / notes（纯文本，截断 20 行）/ htmlUrl / assets[{name,size,downloadCount,url}]`。
 - 页面用 `useFetch<ReleasesPayload>('/api/releases.json')`，`nuxt generate` 时内联进 payload，客户端首屏零请求。
@@ -506,7 +506,7 @@ export function buildRoutes(): string[] {
 | `scripts/sync-fonts.mjs` | 新增 | 基于 `EasiAutoWeb/scripts/copy-fonts.mjs` + 清理 `.output/server`/`.wrangler` |
 | `scripts/verify-output.mjs` | 新增 | 产物级路由断言 |
 | `server/routes/api/releases.json.ts` | 新增 | 见 5.3 |
-| `shared/site.ts` `shared/releases.ts` `shared/data/releases.snapshot.json` `shared/utils/{date,title}.ts` | 改写/新增 | `site.ts` 改品牌与仓库地址；其余新建 |
+| `shared/site.ts` `shared/releases.ts` `shared/data/downloads.json` `shared/utils/{date,title}.ts` | 改写/新增 | `site.ts` 改品牌与仓库地址；其余新建 |
 | `content/docs/**` | 新增 | 8 篇，见 3.3.4 |
 | `public/_headers` `public/robots.txt` | 新增 | |
 | `public/images/**` | 复制 | Logo / favicon / 默认封面来自 `PidanUI-Website-Nuxt/public/images/` |
@@ -605,7 +605,7 @@ export function buildRoutes(): string[] {
 | M1 | `feat(shell): 品牌令牌、三段式外壳与 404` | `tokens/base/main/animation.css`、`app.config.ts`、`SiteHeader/SiteFooter/BackToTop/PageProgress`、`data/{nav,socialLinks,friendLinks}`、`error.vue` + `NotFoundView` | 1280/1024/768/375 四档无横向滚动；<1024 导航为顶栏下方面板；深浅色无闪白；底栏三列 + 版权、无统计组件；`/404.html` 预渲染成功 |
 | M2 | `feat(home): 首页五区块与组件轮播` | `HomeView`、`FeatureGrid`、`ShowcaseCarousel`、`JoinDevSection`、`data/{home,showcase}`、`public/images/showcase/*` | 键盘 ←→/Home/End 生效且不劫持页面滚动；指示点与 `aria-live` 正确；切图无高度跳动；`prefers-reduced-motion` 下无自动播放；历史截图带徽章 |
 | M3 | `feat(docs): 文档站与 docs 内容集合` | `content.config.ts`、`content/docs/**`（两组各 4 篇）、`layouts/docs.vue`、`pages/docs/{index,[...slug]}.vue`、`DocsMobileNav`、`build/routes.ts` 接管 `prerender:routes`、prose 主题 | `/docs` 与全部 8 篇路由都出现在 `.output/public`；侧边栏两组标题与组内顺序正确；TOC 可跳转且不被顶栏遮挡；上下篇顺序与侧边栏一致；窄屏折叠面板可开合且关闭时 `inert` |
-| M4 | `feat(download): GitHub Releases 构建期取数与下载页` | `server/routes/api/releases.json.ts`、`shared/releases.ts`、`shared/data/releases.snapshot.json`、`pages/download.vue`、`ReleaseCard/AssetRow` | 联网构建 payload `source: 'github'`；断网构建自动落 `snapshot` 且 build 仍成功；页面无运行时外网请求；日期标签构建期生成、无 hydration mismatch |
+| M4 | `feat(download): GitHub Releases 构建期取数与下载页` | `server/routes/api/releases.json.ts`、`shared/releases.ts`、`shared/data/downloads.json`、`pages/download.vue`、`ReleaseCard/AssetRow` | 联网构建 payload `source: 'github'`；断网构建自动落 `snapshot` 且 build 仍成功；页面无运行时外网请求；日期标签构建期生成、无 hydration mismatch |
 | M5 | `feat(assets): 自包含字体与缓存策略` | `scripts/sync-fonts.mjs`、Cascadia 导入、`public/_headers`、logo/favicon | `.output/public/fonts/` 有三档字重 + `harmonyos.css`；产物内无 `cdn.jsdelivr.net` 等外部字体请求；`wrangler dev` 下 `_nuxt/*` 与 `fonts/*` 命中 immutable |
 | M6 | `ci: Cloudflare Workers 部署与产物校验` | `wrangler.jsonc`、`scripts/verify-output.mjs`、`.github/workflows/{lint,deploy}.yml`、`README.md` | `verify-output` 对漏页 `exit 1`；`wrangler deploy --dry-run` 通过；`wrangler dev` 下 `/`、`/docs/user/install-rainmeter`、`/nope` 分别 200 / 200 / 404（返回 404.html）；CI 绿 |
 
