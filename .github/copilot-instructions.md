@@ -172,7 +172,7 @@ scripts/                       # sync-fonts.mjs（字体灌注）/ verify-output
 ## 字体与图标
 
 - 字体**自包含**，仓库不保留字体文件：
-  - HarmonyOS Sans SC 由 `scripts/sync-fonts.mjs` 在 `nuxi generate` 之后复制进 `.output/public/fonts/`，并生成 `/fonts/harmonyos.css`（`nuxt.config.ts` 的 `app.head` 引入它）；
+  - HarmonyOS Sans SC 由 `scripts/sync-fonts.mjs` 在 `nuxi generate` 之后复制进 `.output/public/fonts/`，并生成 `/fonts/harmonyos.css`（`nuxt.config.ts` 的 `app.head` 引入它）；开发态没有那次构建，`nitro.publicAssets` 会把 npm 包的 `dist` 挂到 `/fonts`，`app.head` 改引 `Regular/Medium/Bold.css`；
   - Cascadia Code 由 `@fontsource/cascadia-code` 走 Vite 打包。
 - 字体栈唯一定义在 `base.css` 的 `--font-ui` / `--font-code`。**改字体要同时改脚本与字体栈，不要只改一处。**
 - 图标统一用 `<UIcon name="i-lucide-xxx" />`（品牌图标 `i-simple-icons-xxx`）。图标集只装了 `@iconify-json/lucide` 与 `@iconify-json/simple-icons`，**其他集合写了就是空白**。

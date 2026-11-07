@@ -1,5 +1,28 @@
+import { createRequire } from 'node:module';
+import { dirname } from 'node:path';
 import tailwindcss from '@tailwindcss/vite';
 import { buildRoutes } from './build/routes';
+
+// ---- 字体（自包含）----
+// 生产：`nuxi generate` 之后由 scripts/sync-fonts.mjs 生成 /fonts/harmonyos.css；
+// 开发：还没有那次构建，直接把 npm 包里的三档样式（含同目录 woff2 分片）挂到
+//       Nitro 的 /fonts 下，否则 dev 下样式表 404，正文会掉到系统字体。
+const require = createRequire(import.meta.url);
+const isDev = process.env.NODE_ENV === 'development';
+let harmonyFontsDir = '';
+try {
+  harmonyFontsDir = dirname(require.resolve('harmonyos-sans-sc-webfont-splitted'));
+} catch {
+  // 包没装时不挂载：构建会由 sync-fonts.mjs 直接报错，比这里静默失败更明确
+}
+
+const FONT_LINKS = isDev
+  ? [
+      { rel: 'stylesheet', href: '/fonts/Regular.css' },
+      { rel: 'stylesheet', href: '/fonts/Medium.css' },
+      { rel: 'stylesheet', href: '/fonts/Bold.css' },
+    ]
+  : [{ rel: 'stylesheet', href: '/fonts/harmonyos.css' }];
 
 export default defineNuxtConfig({
   compatibilityDate: '2026-11-01',
@@ -32,7 +55,8 @@ export default defineNuxtConfig({
       htmlAttrs: { lang: 'zh-CN' },
       link: [
         { rel: 'icon', type: 'image/x-icon', href: '/images/favicon.ico' },
-        { rel: 'stylesheet', href: '/fonts/harmonyos.css' },
+        // 界面字体：生产引用 sync-fonts.mjs 生成的本地样式表，开发直接挂 npm 包目录
+        ...FONT_LINKS,
       ],
       script: [
         // 首帧同步脚本：DOM 解析时立即给 <html> 加 .js。
@@ -136,6 +160,12 @@ export default defineNuxtConfig({
     // 显式锁死 static：Cloudflare 上的环境变量会把预设切到 cloudflare-*，
     // 那套产物带 Worker 入口，wrangler deploy 会找不到 assets 目录。
     preset: 'static',
+    // 开发期直接挂 npm 包里的 HarmonyOS Sans SC 分片（生产产物由
+    // scripts/sync-fonts.mjs 灌注，不需要这条挂载）。
+    publicAssets:
+      isDev && harmonyFontsDir
+        ? [{ dir: harmonyFontsDir, baseURL: '/fonts', maxAge: 0 }]
+        : undefined,
     prerender: {
       crawlLinks: false,
       failOnError: true,

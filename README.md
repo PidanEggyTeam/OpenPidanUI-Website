@@ -62,7 +62,7 @@ pnpm format:check
 
 ## 字体与图标
 
-字体为 HarmonyOS Sans SC（400 / 500 / 700 三个字重，按 unicode-range 分片）和 Cascadia Code 分包字体，**仓库不保留字体文件**：构建后由 `scripts/sync-fonts.mjs` 把字体灌注进产物，Cascadia Code 走 `@fontsource` 由 Vite 处理。回退链定义见 `app/assets/styles/base.css` 的 `--font-ui` / `--font-code`。
+字体为 HarmonyOS Sans SC（400 / 500 / 700 三个字重，按 unicode-range 分片）和 Cascadia Code 分包字体，**仓库不保留字体文件**：构建后由 `scripts/sync-fonts.mjs` 把字体灌注进产物，Cascadia Code 走 `@fontsource` 由 Vite 处理。开发态由 `nitro.publicAssets` 直接挂 npm 包的字体目录，保证 `pnpm dev` 下也不再出现字体 404。回退链定义见 `app/assets/styles/base.css` 的 `--font-ui` / `--font-code`。
 
 图标使用随 Nuxt UI 内置的 `@nuxt/icon`（Lucide + Simple Icons），图标集以 `@iconify-json/*` 本地安装，**构建期直接内联为 SVG**（`app.config.ts` 里 `icon.mode: 'svg'`），运行时不请求 Iconify API。动态 `:name` 绑定的图标必须在 `nuxt.config.ts` 的 `icon.clientBundle.icons` 里登记。
 
