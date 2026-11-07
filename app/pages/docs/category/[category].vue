@@ -25,6 +25,19 @@ useSeoMeta({
 
 <template>
   <div>
+    <!-- 返回文档：与 PidanUI 官网文章页的「返回新闻」同一套胶囊按钮 -->
+    <nav class="mb-[18px]" aria-label="返回文档">
+      <UButton
+        :to="withBase('/docs')"
+        variant="soft"
+        color="primary"
+        size="sm"
+        class="rounded-full"
+        icon="i-lucide-arrow-left"
+        label="返回文档"
+      />
+    </nav>
+
     <PageHeading :title="name" :description="group?.description ?? `${name}分类下的全部文档。`" />
 
     <div class="pb-4">

@@ -1,0 +1,499 @@
+/* ============================================================
+   文档正文排版（与 PidanUI 官网的 prose.css 同一套观感）
+   ------------------------------------------------------------
+   为什么是全局文件而不是组件 scoped：正文由 <ContentRenderer> 渲染，
+   其 DOM 不带页面的 data-v 标记，scoped 选择器命中不了。
+
+   两条约定：
+   1) 全部包进 @layer components —— 工具类仍能覆盖正文里的任意元素。
+   2) 深色只写 .dark 一条：Nuxt UI 的 colorMode 保证深浅都会落到
+      <html class="dark">，不再需要 [data-theme] 与媒体查询两份拷贝。
+
+   正文元素的外观由本文件独占：app.config.ts 里同名 Prose slot 的
+   base 已清空，避免工具类与本文件抢同一批属性。
+   ============================================================ */
+
+@layer components {
+  .doc-body {
+    font-size: 16px;
+    line-height: 1.85;
+    color: var(--ink-2);
+    /* 长单词 / 长 URL 不撑破布局 */
+    overflow-wrap: break-word;
+    word-break: break-word;
+  }
+
+  .doc-body > :first-child {
+    margin-top: 0;
+  }
+
+  .doc-body > :last-child {
+    margin-bottom: 0;
+  }
+
+  /* ---- 标题（6 级共用一份盒模型，仅在下面改字号） ---- */
+  .doc-body :is(h1, h2, h3, h4, h5, h6) {
+    position: relative;
+    margin: 1.6em 0 0.7em;
+    font-weight: 700;
+    line-height: 1.4;
+    color: var(--ink);
+    /* 吸顶顶栏的高度 + 呼吸空间；与 html 的 scroll-padding-top 同源 */
+    scroll-margin-top: calc(var(--shell-header-h) + 20px);
+  }
+
+  /* 标题锚点：默认隐藏，hover 标题时在左侧淡入一个链条图标 */
+  .doc-body :is(h1, h2, h3, h4, h5, h6) .header-anchor {
+    position: absolute;
+    top: 0;
+    left: -0.9em;
+    color: var(--brand-deep);
+    text-decoration: none;
+    opacity: 0;
+    transition: opacity 0.2s ease;
+  }
+
+  .doc-body :is(h1, h2, h3, h4, h5, h6) .header-anchor::before {
+    content: '';
+    display: block;
+    width: 0.8em;
+    height: 0.8em;
+    background-color: currentColor;
+    -webkit-mask: var(--icon-link) center / contain no-repeat;
+    mask: var(--icon-link) center / contain no-repeat;
+  }
+
+  .doc-body :is(h1, h2, h3, h4, h5, h6):hover .header-anchor,
+  .doc-body :is(h1, h2, h3, h4, h5, h6) .header-anchor:focus-visible {
+    opacity: 1;
+  }
+
+  .doc-body h1 {
+    font-size: 1.7em;
+  }
+
+  .doc-body h2 {
+    padding-bottom: 0.35em;
+    font-size: 1.35em;
+    border-bottom: 1px solid var(--line);
+  }
+
+  .doc-body h3 {
+    font-size: 1.15em;
+  }
+
+  .doc-body h4 {
+    font-size: 1.02em;
+  }
+
+  .doc-body h5 {
+    font-size: 0.95em;
+    color: var(--ink-2);
+  }
+
+  .doc-body h6 {
+    font-size: 0.9em;
+    color: var(--ink-3);
+  }
+
+  /* ---- 文本 ---- */
+  .doc-body p {
+    margin: 0.85em 0;
+  }
+
+  .doc-body a {
+    color: var(--brand-deep);
+    text-decoration: underline;
+    text-underline-offset: 2px;
+  }
+
+  .doc-body a:hover {
+    opacity: 0.85;
+  }
+
+  .doc-body strong {
+    font-weight: 700;
+    color: var(--ink);
+  }
+
+  .doc-body del {
+    color: var(--ink-3);
+  }
+
+  /* ==高亮== */
+  .doc-body mark {
+    padding: 0.05em 0.28em;
+    color: var(--ink);
+    background: linear-gradient(transparent 58%, var(--color-brand-a70) 58%);
+    border-radius: 3px;
+  }
+
+  /* H~2~O / X^2^ */
+  .doc-body :is(sub, sup) {
+    font-size: 0.75em;
+    line-height: 0;
+  }
+
+  /* <kbd> */
+  .doc-body kbd {
+    display: inline-block;
+    padding: 0.1em 0.5em;
+    font-family: var(--font-code);
+    font-size: 0.82em;
+    line-height: 1.6;
+    color: var(--ink);
+    background: var(--bg);
+    border: 1px solid var(--line);
+    border-bottom-width: 2px;
+    border-radius: var(--radius-s);
+  }
+
+  /* ---- 列表 ---- */
+  .doc-body ul,
+  .doc-body ol {
+    margin: 0.7em 0 1em 1.5em;
+  }
+
+  .doc-body ul {
+    list-style: disc;
+  }
+
+  .doc-body ol {
+    list-style: decimal;
+  }
+
+  .doc-body li {
+    margin: 0.3em 0;
+  }
+
+  .doc-body li::marker {
+    color: var(--brand-deep);
+  }
+
+  .doc-body li > :is(ul, ol) {
+    margin: 0.25em 0 0.25em 1.2em;
+  }
+
+  /* ---- 任务列表 ---- */
+  .doc-body .task-list-item {
+    list-style: none;
+  }
+
+  .doc-body .task-list-item > input[type='checkbox'] {
+    width: 1em;
+    height: 1em;
+    margin: 0 0.5em 0 0;
+    vertical-align: -0.12em;
+    accent-color: var(--brand-deep);
+    cursor: default;
+  }
+
+  .doc-body ul.contains-task-list {
+    margin-left: 1.6em;
+  }
+
+  /* ---- 定义列表 ---- */
+  .doc-body dl {
+    margin: 1em 0;
+  }
+
+  .doc-body dt {
+    margin-top: 0.7em;
+    font-weight: 600;
+    color: var(--ink);
+  }
+
+  .doc-body dd {
+    margin: 0.15em 0 0 1.1em;
+    padding-left: 0.8em;
+    color: var(--ink-2);
+    border-left: 2px solid var(--color-brand-deep-a35);
+  }
+
+  /* ---- 引用 ---- */
+  .doc-body blockquote {
+    margin: 1.1em 0;
+    padding: 0.7em 1.1em;
+    color: var(--ink-2);
+    background: var(--color-brand-deep-a08);
+    border-left: 3px solid var(--brand-static);
+    border-radius: 0 10px 10px 0;
+  }
+
+  .doc-body blockquote blockquote {
+    margin: 0.7em 0;
+    background: color-mix(in srgb, var(--brand-deep) 5%, transparent);
+    border-left-color: var(--color-brand-deep-a35);
+  }
+
+  .doc-body blockquote > :first-child {
+    margin-top: 0;
+  }
+
+  .doc-body blockquote > :last-child {
+    margin-bottom: 0;
+  }
+
+  /* ---- 分隔线 ---- */
+  .doc-body hr {
+    margin: 2em 0;
+    border: none;
+    border-top: 1px solid var(--line);
+  }
+
+  /* ---- 行内代码 ---- */
+  .doc-body code {
+    padding: 0.15em 0.42em;
+    font-family: var(--font-code);
+    font-size: 0.9em;
+    color: var(--inline-code-ink);
+    background: var(--inline-code-bg);
+    border-radius: 6px;
+  }
+
+  /* ---- 代码块（ProsePre 输出 div.code-block.language-* > .code-head + pre.shiki）---- */
+  .doc-body div[class*='language-'] {
+    position: relative;
+    margin: 1.2em 0;
+    /* 不能 overflow: hidden —— 它会让本元素成为滚动容器，内部 sticky 的
+       信息栏就被困在自己的坐标系里，永远贴不住视口。 */
+    background: var(--code-bg);
+    border: 1px solid var(--line);
+    border-radius: var(--radius-m);
+  }
+
+  /* ---- 顶部信息栏（语言标签 + 复制按钮）---- */
+  .doc-body div[class*='language-'] > .code-head {
+    position: sticky;
+    top: var(--shell-header-h);
+    z-index: 2;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 6px 12px;
+    background: var(--code-hd);
+    border-bottom: 1px solid var(--line);
+    border-radius: var(--radius-m) var(--radius-m) 0 0;
+  }
+
+  /* 语言标签：栏内文本，不是角标 */
+  .doc-body div[class*='language-'] > .code-head > .lang {
+    font-family: var(--font-code);
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 1.4px;
+    text-transform: uppercase;
+    color: var(--brand-deep);
+    user-select: none;
+    pointer-events: none;
+  }
+
+  /* 无语言代码块：栏内没有标签，复制按钮靠右 */
+  .doc-body div[class*='language-'] > .code-head > .lang:empty {
+    display: none;
+  }
+
+  .doc-body div[class*='language-'] > .code-head > .lang:empty + .copy {
+    margin-left: auto;
+  }
+
+  /* 复制按钮：信息栏内联，常显 */
+  .doc-body div[class*='language-'] > .code-head > .copy {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 24px;
+    height: 24px;
+    padding: 0;
+    color: var(--ink-3);
+    background: transparent;
+    border: 1px solid transparent;
+    border-radius: var(--radius-s);
+    transition:
+      color 0.2s ease,
+      background-color 0.2s ease,
+      border-color 0.2s ease;
+  }
+
+  .doc-body div[class*='language-'] > .code-head > .copy::before {
+    content: '';
+    display: block;
+    width: 15px;
+    height: 15px;
+    background-color: currentColor;
+    -webkit-mask: var(--icon-copy) center / contain no-repeat;
+    mask: var(--icon-copy) center / contain no-repeat;
+  }
+
+  .doc-body div[class*='language-'] > .code-head > .copy:hover,
+  .doc-body div[class*='language-'] > .code-head > .copy:focus-visible {
+    color: var(--brand-deep);
+    background: var(--code-bg);
+    border-color: var(--line);
+  }
+
+  .doc-body div[class*='language-'] > .code-head > .copy.copied {
+    color: var(--brand-deep);
+  }
+
+  .doc-body div[class*='language-'] > .code-head > .copy.copied::before {
+    -webkit-mask-image: var(--icon-check);
+    mask-image: var(--icon-check);
+  }
+
+  .doc-body div[class*='language-'] pre {
+    margin: 0;
+    padding: 14px 16px;
+    overflow-x: auto;
+    background: transparent;
+    border-radius: 0 0 var(--radius-m) var(--radius-m);
+  }
+
+  .doc-body div[class*='language-'] code {
+    padding: 0;
+    font-size: 0.86em;
+    line-height: 1.7;
+    color: inherit;
+    background: none;
+    border-radius: 0;
+  }
+
+  /* Shiki 的每一行是独立 span.line */
+  .doc-body div[class*='language-'] code .line {
+    display: block;
+  }
+
+  /* Shiki 的行内 token 配色由 @nuxt/content 生成（class 模式，主题见
+     nuxt.config.ts 的 highlight.theme），这里不要再写 color: var(--shiki-*)：
+     那会覆盖掉生成的 token 颜色，代码块会退化成单色。 */
+
+  /* ---- 表格 ---- */
+  .doc-body .table-scroll {
+    margin: 1.2em 0;
+    overflow-x: auto;
+    border-radius: var(--radius-m);
+  }
+
+  .doc-body table {
+    display: table;
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 14.5px;
+  }
+
+  .doc-body table :is(th, td) {
+    padding: 9px 14px;
+    text-align: left;
+    border: 1px solid var(--line);
+  }
+
+  .doc-body table thead th {
+    font-weight: 600;
+    color: var(--ink);
+    background: var(--bg);
+  }
+
+  .doc-body table tbody tr:nth-child(2n) {
+    background: color-mix(in srgb, var(--ink-3) 7%, transparent);
+  }
+
+  /* ---- 图片 ---- */
+  .doc-body img {
+    max-width: 100%;
+    height: auto;
+    margin: 1em 0;
+    border-radius: var(--radius-m);
+  }
+
+  .doc-body :is(img:not([src]), img[src='']) {
+    display: none;
+  }
+
+  /* ---- <details> 折叠 ---- */
+  .doc-body details {
+    margin: 1em 0;
+    padding: 0.8em 1em;
+    background: var(--bg);
+    border: 1px solid var(--line);
+    border-radius: var(--radius-m);
+  }
+
+  .doc-body details summary {
+    font-weight: 600;
+    color: var(--ink);
+    cursor: pointer;
+  }
+
+  .doc-body details summary::marker {
+    color: var(--brand-deep);
+  }
+
+  .doc-body details[open] summary {
+    margin-bottom: 0.6em;
+  }
+
+  .doc-body details > :last-child {
+    margin-bottom: 0;
+  }
+
+  /* ---- 脚注 ---- */
+  .doc-body .footnote-ref {
+    margin-left: 2px;
+    font-size: 0.75em;
+  }
+
+  .doc-body .footnote-ref a {
+    padding: 0 0.3em;
+    color: var(--brand-deep);
+    text-decoration: none;
+    background: var(--inline-code-bg);
+    border-radius: 4px;
+  }
+
+  .doc-body .footnotes {
+    margin-top: 1.4em;
+    font-size: 0.92em;
+    color: var(--ink-3);
+  }
+
+  .doc-body .footnotes .footnotes-list {
+    margin-left: 1.4em;
+  }
+
+  .doc-body .footnotes .footnote-item p {
+    margin: 0.35em 0;
+  }
+
+  .doc-body .footnotes .footnote-backref {
+    margin-left: 4px;
+    text-decoration: none;
+  }
+
+  .doc-body hr.footnotes-sep {
+    margin-top: 2em;
+  }
+
+  /* ---- 响应式 ---- */
+  @media (max-width: 768px) {
+    /* 触屏没有 hover：标题锚点直接不显示 */
+    .doc-body :is(h1, h2, h3, h4) .header-anchor {
+      display: none;
+    }
+  }
+
+  @media (max-width: 640px) {
+    .doc-body {
+      font-size: 15px;
+    }
+  }
+}
+
+/* ============================================================
+   图标（内联 SVG，data URI 走 mask，颜色跟随 currentColor）
+   ============================================================ */
+:root {
+  --icon-link: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71'/%3E%3Cpath d='M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71'/%3E%3C/svg%3E");
+  --icon-copy: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Crect width='14' height='14' x='8' y='8' rx='2' ry='2'/%3E%3Cpath d='M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2'/%3E%3C/svg%3E");
+  --icon-check: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M20 6 9 17l-5-5'/%3E%3C/svg%3E");
+}

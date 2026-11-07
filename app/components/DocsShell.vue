@@ -42,16 +42,20 @@ const sortedNavigation = computed(() => sortItems(navigation.value ?? []));
     <div
       class="lg:grid lg:grid-cols-[240px_minmax(0,1fr)] lg:gap-10 xl:grid-cols-[240px_minmax(0,1fr)_200px]"
     >
-      <!-- 桌面左侧目录 -->
+      <!-- 桌面左侧目录：overflow-x-hidden + 内层 px-2.5 抵消 UContentNavigation
+           根节点的 -mx-2.5（hover 底色的外扩量），否则 overflow-y:auto 会
+           连带产生一条水平滚动条 -->
       <aside class="hidden lg:block">
-        <div class="sticky top-20 max-h-[calc(100vh-6rem)] overflow-y-auto pr-2">
-          <UContentNavigation
-            v-if="sortedNavigation.length"
-            :navigation="sortedNavigation"
-            highlight
-            :default-open="true"
-            :ui="{ link: 'text-sm' }"
-          />
+        <div class="sticky top-20 max-h-[calc(100vh-6rem)] overflow-x-hidden overflow-y-auto pr-2">
+          <div class="px-2.5">
+            <UContentNavigation
+              v-if="sortedNavigation.length"
+              :navigation="sortedNavigation"
+              highlight
+              :default-open="true"
+              :ui="{ link: 'text-sm' }"
+            />
+          </div>
         </div>
       </aside>
 
