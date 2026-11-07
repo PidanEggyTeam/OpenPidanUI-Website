@@ -1,0 +1,45 @@
+# 布局与 PidanUI 官网一致：扁平 node_modules（hoisted）。
+# Windows 默认的 isolated 布局下，Tailwind 的包族（@tailwindcss/node、@tailwindcss/oxide …）
+# 会出现「只链了一半」的问题（顶层只有空壳目录、传递依赖缺失）；hoisted 在 Linux/CI 上行为一致。
+nodeLinker: hoisted
+
+# pnpm 12 对「装了但没放行 postinstall」的依赖是**报错**而不是警告（ERR_PNPM_IGNORED_BUILDS），
+# 而且不同平台装到的原生包不一样 —— 少写一个，本地能装、CI 就红。
+# ⚠ 这张表要覆盖所有带 install 脚本的依赖，包括只在 Linux 上才装到的：
+#   esbuild / @parcel/watcher / better-sqlite3 / vue-demi  基础四件
+#   workerd             wrangler 的运行时，本地 preview 用
+#   lightningcss        Tailwind 4 的 CSS 处理（Linux 上是独立原生包）
+#   @tailwindcss/oxide  Tailwind 4 的扫描器（Linux 上是独立原生包，CI 报错就是它）
+#   sharp               图片处理的后备依赖
+allowBuilds:
+  esbuild: true
+  '@parcel/watcher': true
+  better-sqlite3: true
+  vue-demi: true
+  workerd: true
+  lightningcss: true
+  '@tailwindcss/oxide': true
+  sharp: true
+
+# pnpm 12 的供应链策略 minimumReleaseAge（默认拒绝太新的包）会挡下刚发布的依赖，
+# CI 上报 ERR_PNPM_MINIMUM_RELEASE_AGE_VIOLATION。这里只给确实用到的这批版本开口子
+# （Tailwind 4.3.5 与 @iconify-json/lucide 1.2.152 发布不足 24 小时），
+# 其余依赖仍然走默认的等待策略。做法与 PidanUI 官网一致。
+minimumReleaseAgeExclude:
+  - '@iconify-json/lucide@1.2.152'
+  - 'tailwindcss@4.3.5'
+  - '@tailwindcss/node@4.3.5'
+  - '@tailwindcss/oxide@4.3.5'
+  - '@tailwindcss/oxide-android-arm64@4.3.5'
+  - '@tailwindcss/oxide-darwin-arm64@4.3.5'
+  - '@tailwindcss/oxide-darwin-x64@4.3.5'
+  - '@tailwindcss/oxide-freebsd-x64@4.3.5'
+  - '@tailwindcss/oxide-linux-arm-gnueabihf@4.3.5'
+  - '@tailwindcss/oxide-linux-arm64-gnu@4.3.5'
+  - '@tailwindcss/oxide-linux-arm64-musl@4.3.5'
+  - '@tailwindcss/oxide-linux-x64-gnu@4.3.5'
+  - '@tailwindcss/oxide-linux-x64-musl@4.3.5'
+  - '@tailwindcss/oxide-wasm32-wasi@4.3.5'
+  - '@tailwindcss/oxide-win32-arm64-msvc@4.3.5'
+  - '@tailwindcss/oxide-win32-x64-msvc@4.3.5'
+  - '@tailwindcss/vite@4.3.5'

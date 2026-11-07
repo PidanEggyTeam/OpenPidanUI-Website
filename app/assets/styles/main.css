@@ -1,0 +1,25 @@
+/* ============================================================
+   OpenPidanUI 官网 · 全局样式入口
+   ------------------------------------------------------------
+   与 PidanUI 官网 / 冷域观者站保持同一份装配顺序：
+   1) 所有 @import 置顶（CSS 规范）；Tailwind 的三条先声明 @layer。
+   2) 项目局部文件故意「不进 @layer」：未分层规则的优先级永远高于分层规则，
+      工具类只负责「增量修饰」。
+   3) 这里不出现任何非 @import 语句：@theme / @custom-variant 都在 tokens.css。
+   4) Preflight 落在 @layer base，元素级默认值交给它。
+   5) @nuxt/ui 必须排在 tokens.css 之前：它自带只认 .dark 的
+      @custom-variant dark，我们要用自己的三路版本覆盖它。
+   ============================================================ */
+@layer theme, base, components, utilities;
+
+@import 'tailwindcss/theme.css' layer(theme);
+@import 'tailwindcss/preflight.css' layer(base);
+@import 'tailwindcss/utilities.css' layer(utilities);
+
+/* Nuxt UI：主题变量（--ui-*）、组件样式与 keyframes。位置敏感，勿上移。 */
+@import '@nuxt/ui';
+
+@import './tokens.css';
+@import './base.css';
+@import './prose.css';
+@import './animation.css';

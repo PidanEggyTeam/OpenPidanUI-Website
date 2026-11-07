@@ -1,0 +1,13 @@
+# 指纹资源长缓存；HTML 走默认的 must-revalidate（Cloudflare 静态资源默认带 ETag）
+/_nuxt/*
+  Cache-Control: public, max-age=31536000, immutable
+
+/fonts/*
+  Cache-Control: public, max-age=31536000, immutable
+
+/images/*
+  Cache-Control: public, max-age=604800
+
+/*
+  X-Content-Type-Options: nosniff
+  Referrer-Policy: strict-origin-when-cross-origin
