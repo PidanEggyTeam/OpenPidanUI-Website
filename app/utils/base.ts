@@ -4,8 +4,8 @@
  * 把 baseURL 配上，这里自动补前缀——所有链接都必须经过它。
  */
 export function withBase(path: string): string {
-  if (!path.startsWith('/')) return path
-  const base = useRuntimeConfig().app.baseURL || '/'
-  if (base === '/') return path
-  return `${base.replace(/\/$/, '')}${path}`
+  if (!path.startsWith('/')) return path;
+  const base = useRuntimeConfig().app.baseURL || '/';
+  if (base === '/') return path;
+  return `${base.replace(/\/$/, '')}${path}`;
 }

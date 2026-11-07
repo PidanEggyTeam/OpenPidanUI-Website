@@ -1,8 +1,8 @@
 <script setup lang="ts">
 defineProps<{
-  title?: string
-  description?: string
-}>()
+  title?: string;
+  description?: string;
+}>();
 </script>
 
 <template>
@@ -14,7 +14,9 @@ defineProps<{
     </p>
     <div class="mt-8 flex flex-wrap items-center justify-center gap-3">
       <UButton to="/" icon="i-lucide-house" size="lg">回到首页</UButton>
-      <UButton to="/docs" variant="outline" color="neutral" icon="i-lucide-book-open" size="lg">去读文档</UButton>
+      <UButton to="/docs" variant="outline" color="neutral" icon="i-lucide-book-open" size="lg"
+        >去读文档</UButton
+      >
     </div>
   </div>
 </template>

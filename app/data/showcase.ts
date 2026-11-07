@@ -1,13 +1,13 @@
 // 占位图：旧截图压成的 webp（长边 1280 / q60-78，合计约 190 KB），**仅用于确认版式**，
 // 部署前会整体替换成正式的宣传图（届时 `image` 直接写图床 CDN 的绝对 URL 即可，组件对本地路径与绝对 URL 一视同仁）。
 export interface ShowcaseItem {
-  id: string
-  title: string
-  caption: string
-  image: string
-  width: number
-  height: number
-  alt: string
+  id: string;
+  title: string;
+  caption: string;
+  image: string;
+  width: number;
+  height: number;
+  alt: string;
 }
 
 export const SHOWCASE_ITEMS: ShowcaseItem[] = [
@@ -56,4 +56,4 @@ export const SHOWCASE_ITEMS: ShowcaseItem[] = [
     height: 720,
     alt: '另一套主题下的桌面效果',
   },
-]
+];

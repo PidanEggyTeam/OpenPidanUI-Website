@@ -1,7 +1,7 @@
 <script setup lang="ts">
-import type { DocGroup } from '~/composables/useDocsGroups'
+import type { DocGroup } from '~/composables/useDocsGroups';
 
-defineProps<{ groups: DocGroup[] }>()
+defineProps<{ groups: DocGroup[] }>();
 </script>
 
 <template>
@@ -10,10 +10,14 @@ defineProps<{ groups: DocGroup[] }>()
       <div class="flex items-center gap-2">
         <UIcon :name="group.icon" class="size-5 text-primary" />
         <h2 class="text-base font-semibold text-highlighted">{{ group.name }}</h2>
-        <UBadge variant="subtle" color="neutral" size="sm" class="ml-auto">{{ group.entries.length }} 篇</UBadge>
+        <UBadge variant="subtle" color="neutral" size="sm" class="ml-auto"
+          >{{ group.entries.length }} 篇</UBadge
+        >
       </div>
 
-      <p v-if="group.description" class="mt-2 text-sm leading-relaxed text-muted">{{ group.description }}</p>
+      <p v-if="group.description" class="mt-2 text-sm leading-relaxed text-muted">
+        {{ group.description }}
+      </p>
 
       <ol class="mt-4 space-y-1.5">
         <li v-for="entry in group.entries" :key="entry.path">
@@ -21,14 +25,25 @@ defineProps<{ groups: DocGroup[] }>()
             :to="withBase(entry.path)"
             class="group flex items-center gap-2 rounded-md px-2 py-1.5 text-sm text-muted transition-colors hover:bg-elevated hover:text-highlighted"
           >
-            <span class="w-4 shrink-0 text-right font-mono text-xs text-dimmed">{{ entry.order }}</span>
+            <span class="w-4 shrink-0 text-right font-mono text-xs text-dimmed">{{
+              entry.order
+            }}</span>
             <span class="min-w-0 flex-1 truncate">{{ entry.title }}</span>
-            <UIcon name="i-lucide-arrow-right" class="size-3.5 shrink-0 opacity-0 transition-opacity group-hover:opacity-100" />
+            <UIcon
+              name="i-lucide-arrow-right"
+              class="size-3.5 shrink-0 opacity-0 transition-opacity group-hover:opacity-100"
+            />
           </NuxtLink>
         </li>
       </ol>
 
-      <UButton :to="withBase(group.route)" variant="soft" size="sm" class="mt-4" trailing-icon="i-lucide-arrow-right">
+      <UButton
+        :to="withBase(group.route)"
+        variant="soft"
+        size="sm"
+        class="mt-4"
+        trailing-icon="i-lucide-arrow-right"
+      >
         查看分类
       </UButton>
     </UCard>

@@ -1,11 +1,11 @@
 export interface NavItem {
-  key: string
-  label: string
-  href: string
-  icon: string
+  key: string;
+  label: string;
+  href: string;
+  icon: string;
   /** 外链：新窗口打开、带 ↗、永不参与高亮 */
-  external?: boolean
-  trailingIcon?: string
+  external?: boolean;
+  trailingIcon?: string;
 }
 
 export const NAV_ITEMS: NavItem[] = [
@@ -20,4 +20,4 @@ export const NAV_ITEMS: NavItem[] = [
     external: true,
     trailingIcon: 'i-lucide-arrow-up-right',
   },
-]
+];

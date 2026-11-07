@@ -14,6 +14,6 @@ export const SITE = {
   /** 部署域名确认后改成真实域名，canonical / OG 依赖它。 */
   mainUrl: 'https://openpidanui-website.pidaneggyteam.workers.dev',
   locale: 'zh-CN',
-} as const
+} as const;
 
-export const PROMO_IMAGE = 'https://img.remit.ee/i/hsjlCZAGQuf2'
+export const PROMO_IMAGE = 'https://img.remit.ee/i/hsjlCZAGQuf2';

@@ -2,28 +2,28 @@ import {
   DEFAULT_CATEGORY_ICON,
   DOC_CATEGORY_PRESENTATION,
   categoryRoute,
-} from '~/data/docsCategories'
+} from '~/data/docsCategories';
 
 export interface DocEntry {
-  path: string
-  title: string
-  description?: string
+  path: string;
+  title: string;
+  description?: string;
   /** 分类名，来自 frontmatter，可自由命名 */
-  category: string
+  category: string;
   /** 分类内序号 */
-  order: number
+  order: number;
   /** 分类间权重 */
-  categoryOrder: number
-  badge?: string
+  categoryOrder: number;
+  badge?: string;
 }
 
 export interface DocGroup {
-  name: string
-  description?: string
-  icon: string
-  order: number
-  route: string
-  entries: DocEntry[]
+  name: string;
+  description?: string;
+  icon: string;
+  order: number;
+  route: string;
+  entries: DocEntry[];
 }
 
 /**
@@ -43,28 +43,28 @@ export async function useDocsGroups() {
         .select('path', 'title', 'description', 'category', 'order', 'categoryOrder', 'badge')
         .all(),
     { default: () => [] },
-  )
+  );
 
   const entries = computed<DocEntry[]>(() =>
     (data.value as DocEntry[])
       // 排除两个位置：/docs 概览本身，以及 /docs/<组> 这种「分类首页」——
       // 后者由分类页承担，混在列表里会多出一行「0 用户文档」的怪东西
-      .filter(entry => entry.path !== '/docs' && !/^\/docs\/[^/]+$/.test(entry.path))
-      .map(entry => ({ ...entry, categoryOrder: entry.categoryOrder ?? 999 }))
+      .filter((entry) => entry.path !== '/docs' && !/^\/docs\/[^/]+$/.test(entry.path))
+      .map((entry) => ({ ...entry, categoryOrder: entry.categoryOrder ?? 999 }))
       .sort((a, b) => a.order - b.order),
-  )
+  );
 
   const presentation = computed(() =>
-    Object.fromEntries(DOC_CATEGORY_PRESENTATION.map(item => [item.name, item])),
-  )
+    Object.fromEntries(DOC_CATEGORY_PRESENTATION.map((item) => [item.name, item])),
+  );
 
   const groups = computed<DocGroup[]>(() => {
-    const map = new Map<string, DocGroup>()
+    const map = new Map<string, DocGroup>();
 
     for (const entry of entries.value) {
-      let group = map.get(entry.category)
+      let group = map.get(entry.category);
       if (!group) {
-        const preset = presentation.value[entry.category]
+        const preset = presentation.value[entry.category];
         group = {
           name: entry.category,
           description: preset?.description,
@@ -72,24 +72,26 @@ export async function useDocsGroups() {
           order: preset?.order ?? entry.categoryOrder,
           route: categoryRoute(entry.category),
           entries: [],
-        }
-        map.set(entry.category, group)
+        };
+        map.set(entry.category, group);
       }
-      group.entries.push(entry)
+      group.entries.push(entry);
     }
 
-    return [...map.values()].sort((a, b) => a.order - b.order || a.name.localeCompare(b.name, 'zh-CN'))
-  })
+    return [...map.values()].sort(
+      (a, b) => a.order - b.order || a.name.localeCompare(b.name, 'zh-CN'),
+    );
+  });
 
   /** 侧边栏排序用：分类权重 * 1000 + 组内序号 */
   const navRank = computed<Record<string, number>>(() =>
     Object.fromEntries(
-      entries.value.map(entry => {
-        const group = groups.value.find(g => g.name === entry.category)
-        return [entry.path, (group?.order ?? 999) * 1000 + entry.order]
+      entries.value.map((entry) => {
+        const group = groups.value.find((g) => g.name === entry.category);
+        return [entry.path, (group?.order ?? 999) * 1000 + entry.order];
       }),
     ),
-  )
+  );
 
-  return { entries, groups, navRank }
+  return { entries, groups, navRank };
 }

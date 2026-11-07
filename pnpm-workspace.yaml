@@ -20,3 +20,26 @@ allowBuilds:
   lightningcss: true
   '@tailwindcss/oxide': true
   sharp: true
+
+# pnpm 12 的供应链策略 minimumReleaseAge（默认拒绝太新的包）会挡下刚发布的依赖，
+# CI 上报 ERR_PNPM_MINIMUM_RELEASE_AGE_VIOLATION。这里只给确实用到的这批版本开口子
+# （Tailwind 4.3.5 与 @iconify-json/lucide 1.2.152 发布不足 24 小时），
+# 其余依赖仍然走默认的等待策略。做法与 PidanUI 官网一致。
+minimumReleaseAgeExclude:
+  - '@iconify-json/lucide@1.2.152'
+  - 'tailwindcss@4.3.5'
+  - '@tailwindcss/node@4.3.5'
+  - '@tailwindcss/oxide@4.3.5'
+  - '@tailwindcss/oxide-android-arm64@4.3.5'
+  - '@tailwindcss/oxide-darwin-arm64@4.3.5'
+  - '@tailwindcss/oxide-darwin-x64@4.3.5'
+  - '@tailwindcss/oxide-freebsd-x64@4.3.5'
+  - '@tailwindcss/oxide-linux-arm-gnueabihf@4.3.5'
+  - '@tailwindcss/oxide-linux-arm64-gnu@4.3.5'
+  - '@tailwindcss/oxide-linux-arm64-musl@4.3.5'
+  - '@tailwindcss/oxide-linux-x64-gnu@4.3.5'
+  - '@tailwindcss/oxide-linux-x64-musl@4.3.5'
+  - '@tailwindcss/oxide-wasm32-wasi@4.3.5'
+  - '@tailwindcss/oxide-win32-arm64-msvc@4.3.5'
+  - '@tailwindcss/oxide-win32-x64-msvc@4.3.5'
+  - '@tailwindcss/vite@4.3.5'

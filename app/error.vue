@@ -1,11 +1,11 @@
 <script setup lang="ts">
-import type { NuxtError } from '#app'
+import type { NuxtError } from '#app';
 
-const props = defineProps<{ error: NuxtError }>()
+const props = defineProps<{ error: NuxtError }>();
 
-const is404 = computed(() => props.error?.statusCode === 404)
+const is404 = computed(() => props.error?.statusCode === 404);
 
-useSeoMeta({ title: is404.value ? '页面不存在' : '出错了' })
+useSeoMeta({ title: is404.value ? '页面不存在' : '出错了' });
 </script>
 
 <template>
@@ -22,7 +22,9 @@ useSeoMeta({ title: is404.value ? '页面不存在' : '出错了' })
         <p class="mt-3 max-w-md text-sm leading-relaxed text-muted">
           {{ error?.statusMessage || error?.message || '页面渲染失败，请稍后重试。' }}
         </p>
-        <UButton class="mt-8" to="/" icon="i-lucide-house" @click="clearError({ redirect: '/' })">回到首页</UButton>
+        <UButton class="mt-8" to="/" icon="i-lucide-house" @click="clearError({ redirect: '/' })"
+          >回到首页</UButton
+        >
       </div>
     </NuxtLayout>
   </UApp>

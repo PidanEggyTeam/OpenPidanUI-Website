@@ -1,7 +1,7 @@
 export interface FeatureItem {
-  icon: string
-  title: string
-  description: string
+  icon: string;
+  title: string;
+  description: string;
 }
 
 /** 六条卖点，全部出自 OpenPidanUI 的自述（D:\TestProject\Eggix\README.md）。 */
@@ -14,12 +14,14 @@ export const HOME_FEATURES: FeatureItem[] = [
   {
     icon: 'i-lucide-shield-check',
     title: '不修改系统文件',
-    description: '不替换 imageres.dll.mun、shell32.dll.mun 这类文件。美化靠主题包、壁纸与音效，卸载只要切回默认主题。',
+    description:
+      '不替换 imageres.dll.mun、shell32.dll.mun 这类文件。美化靠主题包、壁纸与音效，卸载只要切回默认主题。',
   },
   {
     icon: 'i-lucide-palette',
     title: '精简版美化',
-    description: '只保留定制主题与 Rainmeter 小组件，去掉冗余的持久化改动，日常用起来接近原版 Windows。',
+    description:
+      '只保留定制主题与 Rainmeter 小组件，去掉冗余的持久化改动，日常用起来接近原版 Windows。',
   },
   {
     icon: 'i-lucide-layers',
@@ -34,35 +36,44 @@ export const HOME_FEATURES: FeatureItem[] = [
   {
     icon: 'i-lucide-package',
     title: '组件全家桶',
-    description: 'PowerShell 部署脚本、Rainmeter 小组件设置程序、头像制作器 AvatarMaker，配套齐全。',
+    description:
+      'PowerShell 部署脚本、Rainmeter 小组件设置程序、头像制作器 AvatarMaker，配套齐全。',
   },
-]
+];
 
 export interface TimelineItem {
-  time: string
-  title: string
-  description: string
+  time: string;
+  title: string;
+  description: string;
 }
 
 /** 名称沿革：只讲事实，不复述争议。 */
 export const ABOUT_TIMELINE: TimelineItem[] = [
   { time: '2024-04', title: 'EggyUI 启动', description: '以易语言为主要技术栈起步。' },
-  { time: '2026-10', title: 'Finale Mini 发布', description: 'EggyUI 收官版本，随后归档停止维护。' },
-  { time: '2026', title: '更名 OpenPidanUI', description: 'OpenEggyUI 全面重构，转向 .NET 10，并恢复开发。' },
+  {
+    time: '2026-10',
+    title: 'Finale Mini 发布',
+    description: 'EggyUI 收官版本，随后归档停止维护。',
+  },
+  {
+    time: '2026',
+    title: '更名 OpenPidanUI',
+    description: 'OpenEggyUI 全面重构，转向 .NET 10，并恢复开发。',
+  },
   { time: '至今', title: '随 PidanUI 一起更新', description: '组件按模块发布，与主项目同步迭代。' },
-]
+];
 
 export const ABOUT_TEXT = [
   'OpenPidanUI 是 PidanUI 的辅助组件开源代码库，存放系统镜像、独立美化包所需的配套组件源代码。',
   '它不负责替换系统文件，也不做持久化的系统改动——美化交给主题包与 Rainmeter，出问题切回默认主题就能恢复。',
-]
+];
 
 export interface JoinCard {
-  title: string
-  description: string
-  icon: string
-  links: { label: string; to: string; external?: boolean }[]
-  tags: string[]
+  title: string;
+  description: string;
+  icon: string;
+  links: { label: string; to: string; external?: boolean }[];
+  tags: string[];
 }
 
 export const JOIN_CARDS: JoinCard[] = [
@@ -86,4 +97,4 @@ export const JOIN_CARDS: JoinCard[] = [
     ],
     tags: ['.NET 10', 'C#', 'WPF', 'Rainmeter', 'PowerShell'],
   },
-]
+];
