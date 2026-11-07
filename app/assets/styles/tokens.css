@@ -1,0 +1,45 @@
+/* 设计令牌：颜色真值只在 base.css 的 :root，这里把它们暴露成 Tailwind 主题变量。
+   @theme static 是硬要求：Nuxt UI 的组件在构建期就要能读到这些键，动态 @theme 会漏。 */
+@theme static {
+  --font-sans: var(--font-ui);
+  --font-mono: var(--font-code);
+
+  /* 品牌黄：500/600 是主色（#ffc53d / #ff9f1a） */
+  --color-brand-50: #fffdf5;
+  --color-brand-100: #fff8e1;
+  --color-brand-200: #ffefc2;
+  --color-brand-300: #ffe49b;
+  --color-brand-400: #ffd76b;
+  --color-brand-500: #ffc53d;
+  --color-brand-600: #ff9f1a;
+  --color-brand-700: #d97e0a;
+  --color-brand-800: #a85f06;
+  --color-brand-900: #7a4404;
+  --color-brand-950: #4a2902;
+
+  /* 灰阶（沿用 PidanUI 官网的 ink 命名，注意不能叫 neutral——那是 Nuxt UI 保留名） */
+  --color-ink-50: #f7f8fa;
+  --color-ink-100: #f2f3f5;
+  --color-ink-200: #e5e6eb;
+  --color-ink-300: #c9cdd4;
+  --color-ink-400: #86909c;
+  --color-ink-500: #4e5969;
+  --color-ink-600: #3d4655;
+  --color-ink-700: #2e3440;
+  --color-ink-800: #232830;
+  --color-ink-900: #1d2129;
+  --color-ink-950: #15181d;
+
+  --radius-sm: 6px;
+  --radius-md: 8px;
+  --radius-lg: 12px;
+  --radius-xl: 16px;
+  --radius-2xl: 20px;
+  --radius-3xl: 24px;
+
+  --shadow-card: 0 1px 2px rgb(29 33 41 / 0.04), 0 8px 24px -12px rgb(29 33 41 / 0.12);
+  --shadow-float: 0 12px 32px -12px rgb(29 33 41 / 0.18);
+  --shadow-brand: 0 10px 30px -12px rgb(255 159 26 / 0.45);
+
+  --container-page: 1400px;
+}

@@ -1,0 +1,24 @@
+{
+  "source": "snapshot",
+  "fetchedAt": null,
+  "releases": [
+    {
+      "tag": "v0.1.0-preview",
+      "version": "0.1.0-preview",
+      "name": "首个预览版（占位数据）",
+      "publishedAt": "2026-11-01T00:00:00Z",
+      "publishedAtLabel": "2026-11-01",
+      "prerelease": true,
+      "notes": "这是一份随站点入库的占位数据：仓库还没有正式发布 Release。\n正式发版后，构建期会自动从 GitHub Releases 拉取真实版本，本条目随即失效。\n\n包含内容（规划中）：\nRainmeter 小组件 .rmskin\n组件设置程序 HomeSettings",
+      "htmlUrl": "https://github.com/PidanUI-Team/OpenPidanUI/releases",
+      "assets": [
+        {
+          "name": "OpenPidanUI-Widgets-0.1.0-preview.rmskin",
+          "size": 2411724,
+          "downloadCount": 0,
+          "url": "https://github.com/PidanUI-Team/OpenPidanUI/releases"
+        }
+      ]
+    }
+  ]
+}

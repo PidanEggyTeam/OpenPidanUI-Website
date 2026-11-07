@@ -1,0 +1,8 @@
+node_modules
+.output
+.nuxt
+.data
+.wrangler
+public/fonts
+content/docs/**/*.md
+pnpm-lock.yaml

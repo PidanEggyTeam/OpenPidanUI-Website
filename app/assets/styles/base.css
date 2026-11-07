@@ -1,0 +1,105 @@
+/* 颜色与字体的唯一真值。深色两组必须逐字一致（一份给显式 [data-theme]，一份给 system 跟随）。 */
+:root {
+  --brand: #ffc53d;
+  --brand-deep: #ff9f1a;
+  --brand-soft: #fff7e0;
+  --brand-grad: linear-gradient(100deg, #ffc53d 0%, #ff9f1a 55%, #ff7a1a 100%);
+
+  --font-ui: 'HarmonyOS Sans SC', 'PingFang SC', 'Microsoft YaHei', system-ui, -apple-system, 'Segoe UI', sans-serif;
+  --font-code: 'Cascadia Code', 'Cascadia Mono', Consolas, 'Liberation Mono', monospace;
+
+  --bg: #fafbfc;
+  --card: #ffffff;
+  --line: #f0f1f3;
+
+  --ink: #1d2129;
+  --ink-2: #4e5969;
+  --ink-3: #86909c;
+
+  --shell-header-h: 64px;
+
+  --ui-primary: var(--brand-deep);
+  --ui-bg: var(--bg);
+  --ui-bg-muted: #f4f5f7;
+  --ui-bg-elevated: var(--card);
+  --ui-border: var(--line);
+  --ui-text: var(--ink);
+  --ui-text-muted: var(--ink-2);
+  --ui-text-dimmed: var(--ink-3);
+}
+
+.dark {
+  --bg: #17171a;
+  --card: #1f1f23;
+  --line: #2a2f36;
+
+  --ink: #f2f3f5;
+  --ink-2: #c9cdd4;
+  --ink-3: #86909c;
+
+  --brand-soft: #2a2418;
+
+  --ui-bg-muted: #232328;
+  --ui-bg-elevated: var(--card);
+  --ui-border: var(--line);
+  --ui-text: var(--ink);
+  --ui-text-muted: var(--ink-2);
+  --ui-text-dimmed: var(--ink-3);
+}
+
+@layer base {
+  html {
+    scroll-behavior: smooth;
+    -webkit-text-size-adjust: 100%;
+  }
+
+  body {
+    background-color: var(--bg);
+    color: var(--ink);
+    font-family: var(--font-ui);
+    /* 不能写 hidden：sticky 会失效 */
+    overflow-x: clip;
+    text-rendering: optimizeLegibility;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  ::selection {
+    background-color: var(--brand);
+    color: #1d2129;
+  }
+
+  /* 锚点跳转别被固定顶栏盖住 */
+  :where(h1, h2, h3, h4) {
+    scroll-margin-top: calc(var(--shell-header-h) + 16px);
+  }
+
+  :focus-visible {
+    outline: 2px solid var(--brand-deep);
+    outline-offset: 2px;
+  }
+}
+
+@layer components {
+  /* 品牌渐变字，只对 <em> 生效 */
+  .brand-gradient em {
+    font-style: normal;
+    background-image: var(--brand-grad);
+    background-clip: text;
+    -webkit-background-clip: text;
+    color: transparent;
+  }
+
+  .section-shell {
+    padding-block: clamp(3rem, 6vw, 5.5rem);
+  }
+
+  /* shiki 双主题：Nuxt UI 的 prose 用的是 CSS 变量，这里补齐深色切换 */
+  html.dark .shiki,
+  html.dark .shiki span {
+    color: var(--shiki-dark) !important;
+    background-color: transparent !important;
+    font-style: var(--shiki-dark-font-style) !important;
+    font-weight: var(--shiki-dark-font-weight) !important;
+    text-decoration: var(--shiki-dark-text-decoration) !important;
+  }
+}

@@ -1,0 +1,12 @@
+{
+  // assets-only Worker：没有 main 字段，纯静态资源，请求不计费。
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "openpidanui-website",
+  "compatibility_date": "2026-11-01",
+  "observability": { "enabled": true },
+  "assets": {
+    "directory": ".output/public",
+    "not_found_handling": "404-page",
+    "html_handling": "auto-trailing-slash"
+  }
+}

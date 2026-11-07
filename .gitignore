@@ -1,0 +1,27 @@
+# dependencies
+node_modules/
+.pnpm-store/
+
+# Nuxt / Nitro
+.nuxt/
+.output/
+.data/
+.nitro/
+.cache/
+
+# Cloudflare
+.wrangler/
+
+# generated fonts (produced by scripts/sync-fonts.mjs)
+public/fonts/
+
+# editor / OS
+.DS_Store
+Thumbs.db
+*.log
+.env
+.env.*
+!.env.example
+
+# nuxi generate 的旧输出目录（保留忽略，避免误提交）
+dist/
