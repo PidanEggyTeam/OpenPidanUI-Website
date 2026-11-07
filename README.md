@@ -45,9 +45,10 @@
 5. `pnpm build` 生成静态产物，输出在 **`.output/public`**
 
 ```bash
-pnpm build      # nuxi generate + 注入字体 + 产物校验
-pnpm preview    # wrangler dev，按 Cloudflare 的规则跑静态产物
-pnpm deploy     # 构建 + wrangler deploy
+pnpm build       # nuxi generate + 注入字体 + 产物校验
+pnpm preview     # wrangler dev，按 Cloudflare 的规则跑静态产物
+pnpm deploy      # 构建 + wrangler deploy
+pnpm lint        # ESLint：可能出错的地方 + 分号硬约束
 pnpm format:check
 ```
 

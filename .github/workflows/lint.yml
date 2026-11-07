@@ -1,34 +1,53 @@
-name: lint
+name: Lint & Format
 
+# 代码风格守门：ESLint（可能出错的地方 + 分号硬约束）+ Prettier（排版）+ 构建校验
+#
+# 三个触发来源：
+#   pull_request      —— 所有 PR（含 fork 发起的）都跑一次
+#   push              —— 分支推送也跑，但只要不是 main
+#   workflow_dispatch —— 需要手动重跑时
 on:
   push:
     branches-ignore: [main]
   pull_request:
   workflow_dispatch:
 
+permissions:
+  contents: read
+
+concurrency:
+  group: lint-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
-  lint:
+  quality:
+    name: ESLint + Prettier
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v5
 
-      - uses: pnpm/action-setup@v4
-        with:
-          version: 12.11.2
+      # 版本由 package.json 的 packageManager 字段决定，不在这里硬编码
+      - uses: pnpm/action-setup@v5
 
       - uses: actions/setup-node@v5
         with:
           node-version-file: .node-version
           cache: pnpm
 
-      - name: Install
+      - name: Install dependencies
         run: pnpm install --frozen-lockfile
 
-      - name: Format check
-        run: pnpm format:check
+      # 先查排版：报错信息是「哪个文件没按 Prettier 排」，比 lint 报错更好定位
+      - name: Prettier (format:check)
+        run: pnpm run format:check
 
-      # 构建同时跑产物校验：能抓出漏页与坏链接
+      # ESLint 的 @stylistic/semi 会把「漏分号」判成错误：
+      # 这一步失败，后面的构建与部署都不会发生。
+      - name: ESLint
+        run: pnpm run lint
+
+      # 构建同时跑产物校验（scripts/verify-output.mjs）：能抓出漏页与坏链接
       - name: Build
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: pnpm build
+        run: pnpm run build

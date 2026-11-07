@@ -29,7 +29,7 @@ export const HOME_FEATURES: FeatureItem[] = [
     description: '每个组件独立发布、独立更新，出问题只换那一个，不用整包重装。',
   },
   {
-    icon: 'i-lucide-github',
+    icon: 'i-simple-icons-github',
     title: '开源透明',
     description: '源码可审查，欢迎提交 issue 与 PR。改了什么、为什么改，都能在提交记录里找到。',
   },

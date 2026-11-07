@@ -35,13 +35,13 @@
 
 ## 项目概况
 
-| 项       | 值                                                                                                                                                           |
-| -------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| 定位     | OpenPidanUI（PidanUI 配套组件）官网，纯静态站点（SSG），部署于 Cloudflare Workers Static Assets                                                              |
-| 技术栈   | Nuxt `4.6.4` + Vue `3.5.45` + TypeScript（别名装 TS 6 API，见「代码风格与 CI」）+ Tailwind CSS `4.3.5` + Nuxt UI `4.12` + @nuxt/content `3.16.2`             |
-| 包管理器 | pnpm（`packageManager: pnpm@12.11.2`），Node 版本由 `.node-version` 固定（22.x），CI 用 `pnpm install --frozen-lockfile`                                     |
-| 发布流程 | 分支 / PR 触发 `.github/workflows/lint.yml`（`pnpm format:check` → `pnpm build`）；部署由维护者执行 `pnpm deploy`（`wrangler deploy`），仓库里没有部署流水线 |
-| 许可证   | AGPL v3，禁止商业用途                                                                                                                                        |
+| 项       | 值                                                                                                                                                                         |
+| -------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| 定位     | OpenPidanUI（PidanUI 配套组件）官网，纯静态站点（SSG），部署于 Cloudflare Workers Static Assets                                                                            |
+| 技术栈   | Nuxt `4.6.4` + Vue `3.5.45` + TypeScript（别名装 TS 6 API，见「代码风格与 CI」）+ Tailwind CSS `4.3.5` + Nuxt UI `4.12` + @nuxt/content `3.16.2`                           |
+| 包管理器 | pnpm（`packageManager: pnpm@12.11.2`），Node 版本由 `.node-version` 固定（22.x），CI 用 `pnpm install --frozen-lockfile`                                                   |
+| 发布流程 | 分支 / PR 触发 `.github/workflows/lint.yml`（`pnpm format:check` → `pnpm lint` → `pnpm build`）；部署由维护者执行 `pnpm deploy`（`wrangler deploy`），仓库里没有部署流水线 |
+| 许可证   | AGPL v3，禁止商业用途                                                                                                                                                      |
 
 ## 常用命令
 
@@ -52,6 +52,9 @@ pnpm generate                  # 只生成静态产物
 pnpm preview                   # wrangler dev：按 Cloudflare 的规则跑静态产物
 pnpm deploy                    # 构建 + wrangler deploy
 pnpm exec nuxt prepare         # 生成 .nuxt 类型（改 nuxt.config / app.config 后手动跑一次）
+pnpm lint                      # ESLint：找「可能出错的地方」+ 分号硬约束
+pnpm lint:fix                  # ESLint 自动修复（漏分号等）
+pnpm format                    # Prettier 全量重排
 pnpm format:check              # Prettier 检查（CI 用这个）
 ```
 
@@ -63,10 +66,20 @@ pnpm format:check              # Prettier 检查（CI 用这个）
 
 ## 代码风格与 CI
 
-- 排版由 **Prettier** 唯一接管：`semi: true`、`singleQuote: true`、`printWidth: 100`、`tabWidth: 2`、`trailingComma: all`、`endOfLine: auto`（Windows 工作区是 CRLF、CI 检出 LF，写死 `lf` 会让本机 `format:check` 全红）。**语句结束必须写分号。**
-- 本仓库**没有 ESLint**：风格问题只有 Prettier 这一道闸。不要在没有检查覆盖的地方引入新的写法风格（例如混用单双引号、`import` 顺序随意）。
+- 排版由 **Prettier** 接管：`semi: true`、`singleQuote: true`、`printWidth: 100`、`tabWidth: 2`、`trailingComma: all`、`endOfLine: auto`（Windows 工作区是 CRLF、CI 检出 LF，写死 `lf` 会让本机 `format:check` 全红）。
+- **硬约束：语句结束必须写分号。** 两处一起兜：Prettier 的 `"semi": true` 负责排版时补上，ESLint 的 `@stylistic/semi: ['error', 'always']` 负责当场报红。手写或粘贴的 TS 少了分号，`pnpm lint` 直接失败——CI 的 lint 步骤不过，构建与部署都不会继续。**不要**把任何一方改成 `false` / `'never'`。
+  - 原因是 **ASI（Automatic Semicolon Insertion，自动分号插入）不是「随便补」**：它只在换行处、且遇到语法错误时才插入分号，遇到能继续解析的写法会继续拼接。这类「看起来换行了、实际被当成同一句」的代码能通过语法检查，却完全改变了语义，属于灾难性解析错误：
+    - 行首 `(` / `[` / 模板字符串会成为上一行的继续调用或索引：
+      `const a = b` 换行 `[1, 2].forEach(...)` 被解析成 `b[1, 2].forEach(...)`；
+      `const x = y` 换行 `(function () {})()` 被解析成 `y(function () {})()`。
+    - `return` / `break` / `continue` 后紧接换行会被当成语句结束：`return` 换行 `value` 实际 `return undefined`。
+    - `let a = 1` 换行 `-1` 之类会被当成二元运算，变量初始化值直接算错。
+  - 这些错误在源码里不报错、在压缩 / 转译 / 预渲染之后更难定位；统一写分号是唯一可靠的防线，所以把它升级成 lint 错误而不是可选的风格偏好。
+- 分工固定：**Prettier 管排版（缩进、引号、换行、分号），ESLint 只管可能出错的地方**（未定义变量、无效的 Vue 用法、可疑的 TS 写法）。职责重叠的规则由 `eslint-config-prettier` 关掉，所以不要把格式化规则加回 ESLint，否则两个工具会互相改来改去。
+- 配置文件：`.prettierrc.json` + `.prettierignore` + `eslint.config.mjs`（flat config）。`content/` 与 `public/` 不进 Prettier：文档正文的 MDC 组件与中文长句经不起换行重排，字体目录是构建期生成的。ESLint 的 `ignores` 与之一致，并额外忽略 `.wrangler/`。
+- 本仓库**没有安装 `@nuxt/eslint`**：它会连带引入一整套 `@stylistic` 排版规则，与 Prettier 冲突。ESLint 只提供 Nuxt 目录约定需要的少量规则（关闭 `vue/multi-word-component-names`、`vue/require-default-prop`，`no-undef` 在 `.vue` 里关掉以免与自动导入误报）。
 - `.prettierignore` 排除了 `content/`、`public/`、依赖与构建产物：文档正文的 MDC 组件与中文长句经不起换行重排，字体目录是构建期生成的。
-- CI：`.github/workflows/lint.yml` 在 `push`（排除 `main`）、`pull_request`、`workflow_dispatch` 上跑 `pnpm format:check` 与 `pnpm build`——**构建本身就是产物校验**，漏页会在这里被抓到。
+- CI：`.github/workflows/lint.yml`（`name: Lint & Format`，job `quality`）在 `push`（排除 `main`）、`pull_request`、`workflow_dispatch` 上依次跑 `pnpm format:check` → `pnpm lint` → `pnpm build`——**构建本身就是产物校验**，漏页会在这里被抓到。顺序是刻意的：先定位排版问题，再看 lint，最后才是构建。
 - **TypeScript 是别名安装的**：`"typescript": "npm:@typescript/typescript6@^6.0.2"`。项目构建走 `nuxi generate`、不跑 `tsc`，类型检查依赖编辑器的语言服务与 `nuxt prepare` 生成的 `.nuxt` 类型。
 - 注释风格与现有文件一致：中文、`// ====` 分节横幅，只解释「为什么」，不复述代码。
 
@@ -212,5 +225,5 @@ scripts/                       # sync-fonts.mjs（字体灌注）/ verify-output
 6. 深浅色两种模式都看一遍：首帧不闪白、卡片描边与文字对比度正常、轮播/进度条/返回顶部不受主题影响而失色。
 7. 「新闻」导航只有一个 ↗；底栏社交图标不是空白（`simple-icons` 用法正确）。
 8. 新增图标已登记进 `icon.clientBundle.icons`，新增颜色 / 圆角来自变量，新增动效有 reduced-motion 分支。
-9. `pnpm exec prettier --check <改动文件>` 通过；没有把无关的格式化差异混进提交。
+9. `pnpm lint` 与 `pnpm exec prettier --check <改动文件>` 都通过；没有把无关的格式化差异混进提交。
 10. 没有提交构建产物、缓存、日志或临时文件。

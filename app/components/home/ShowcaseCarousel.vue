@@ -25,11 +25,6 @@ function stop() {
   }
 }
 
-function restart() {
-  stop();
-  start();
-}
-
 function step(delta: 1 | -1, auto = false) {
   dir.value = delta > 0 ? 'next' : 'prev';
   index.value = (index.value + delta + items.length) % items.length;
