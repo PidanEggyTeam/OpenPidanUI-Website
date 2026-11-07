@@ -49,6 +49,8 @@ export function buildRoutes(): string[] {
   walkDocs(DOCS_DIR, '/docs', result)
 
   // 分类页：slug 直接从 frontmatter 收集，新增分类不用改这里
-  const categoryRoutes = [...result.categories].sort().map(slug => `/docs/category/${slug}`)
+  const categoryRoutes = [...result.categories]
+    .sort((a, b) => a.localeCompare(b, 'zh-CN'))
+    .map(name => `/docs/category/${encodeURIComponent(name)}`)
   return [...base, ...result.routes, ...categoryRoutes]
 }

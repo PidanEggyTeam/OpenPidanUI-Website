@@ -7,32 +7,26 @@
  * 这里用 order 映射把它纠正回来（分类组之间按 DOC_CATEGORIES 的 order）。
  */
 import type { ContentNavigationItem } from '@nuxt/content'
-import { DOC_CATEGORIES } from '~/data/docsCategories'
 
-const props = defineProps<{
+defineProps<{
   tocLinks?: { id: string, text: string, depth: number }[]
   showToc?: boolean
 }>()
 
 const navigation = inject<Ref<ContentNavigationItem[] | null>>('navigation')
-const { orderMap } = useDocsGroups()
+const { navRank } = await useDocsGroups()
 const open = ref(false)
-
-const categoryRank = computed<Record<string, number>>(() =>
-  Object.fromEntries(DOC_CATEGORIES.map(c => [`/docs/${c.slug}`, c.order])),
-)
 
 function sortItems(items: ContentNavigationItem[]): ContentNavigationItem[] {
   return [...items]
     .map(item => (item.children?.length ? { ...item, children: sortItems(item.children) } : item))
     .sort((a, b) => {
-      // 分组节点：用该组第一篇的 order + 分类权重；叶子节点：用自身 order
+      // 叶子节点用 navRank（分类权重 * 1000 + 组内 order）；分组节点取组内最小 rank
       const rank = (node: ContentNavigationItem) => {
         if (node.children?.length) {
-          const first = node.children[0]
-          return (categoryRank.value[node.path ?? ''] ?? 0) * 1000 + (orderMap.value[first?.path ?? ''] ?? 0)
+          return Math.min(...node.children.map(child => navRank.value[child.path ?? ''] ?? 999999))
         }
-        return orderMap.value[node.path ?? ''] ?? 999
+        return navRank.value[node.path ?? ''] ?? 999999
       }
       return rank(a) - rank(b)
     })

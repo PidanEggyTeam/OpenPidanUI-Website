@@ -57,13 +57,17 @@ scripts/            字体灌注、产物校验
 ---
 title: 安装 Rainmeter
 description: 一句话摘要，会出现在卡片和 SEO 里
-category: user      # user | developer，对应 app/data/docsCategories.ts
-order: 1            # 分类内的显示序号，侧边栏 / 分类页 / 上下篇都按它
+category: 用户文档      # 自由命名，同名即同组（中文也可以）
+order: 1               # 分类内的显示序号：侧边栏 / 分类页 / 上下篇都按它
+categoryOrder: 1       # 分类之间的权重，小的在前；不填按分类名排序
 ---
 ```
 
-新增分类要改两处：`app/data/docsCategories.ts` 加一条，`content/docs/` 下建对应目录；
-`build/routes.ts` 会自动按 frontmatter 里出现过的 `category` 枚举 `/docs/category/<slug>`。
+分类**不需要预先登记**：写一个新的 `category` 值，站点就会自动多出一个分类和
+`/docs/category/<分类名>` 页面（`build/routes.ts` 从 frontmatter 收集）。
+
+想给某个分类配图标 / 描述 / 强制排序，再去 `app/data/docsCategories.ts` 的
+`DOC_CATEGORY_PRESENTATION` 里加一条即可；没配的分类走默认图标与通用描述。
 
 ## 下载数据
 

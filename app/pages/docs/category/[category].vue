@@ -1,26 +1,32 @@
 <script setup lang="ts">
-import { findCategory } from '~/data/docsCategories'
-
 const route = useRoute()
-const slug = computed(() => String(route.params.category ?? ''))
-const category = computed(() => findCategory(slug.value))
+/** 分类名可以是中文，路由参数会自动解码；这里再兜一层 decode 以防双重编码 */
+const name = computed(() => {
+  const raw = String(route.params.category ?? '')
+  try {
+    return decodeURIComponent(raw)
+  } catch {
+    return raw
+  }
+})
 
-if (!category.value) {
+const { groups } = await useDocsGroups()
+const group = computed(() => groups.value.find(item => item.name === name.value))
+
+
+if (!group.value) {
   throw createError({ statusCode: 404, statusMessage: '分类不存在', fatal: true })
 }
 
-const { groups } = useDocsGroups()
-const group = computed(() => groups.value.find(g => g.slug === slug.value))
-
 useSeoMeta({
-  title: `${category.value.title} · 文档`,
-  description: category.value.description,
+  title: `${name.value} · 文档`,
+  description: computed(() => group.value?.description ?? `${name.value}分类下的全部文档。`),
 })
 </script>
 
 <template>
   <div>
-    <PageHeading :title="category!.title" :description="category!.description" />
+    <PageHeading :title="name" :description="group?.description ?? `${name}分类下的全部文档。`" />
 
     <div class="mx-auto w-full max-w-page px-4 py-10 sm:px-6">
       <ol class="space-y-3">

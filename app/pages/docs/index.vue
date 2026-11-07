@@ -4,7 +4,7 @@ useSeoMeta({
   description: 'OpenPidanUI 文档：安装 Rainmeter、导入小组件、组件设置，以及仓库结构、构建调试与发版流程。',
 })
 
-const { groups } = useDocsGroups()
+const { groups } = await useDocsGroups()
 </script>
 
 <template>

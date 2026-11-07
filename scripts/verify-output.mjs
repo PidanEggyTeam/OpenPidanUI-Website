@@ -11,9 +11,11 @@ import { buildRoutes } from '../build/routes.ts'
 
 const PUBLIC_DIR = fileURLToPath(new URL('../.output/public', import.meta.url))
 
-/** autoSubfolderIndex: false → /about 落成 about.html */
+/** autoSubfolderIndex: false → /about 落成 about.html；中文分类名在 URL 里是百分号编码，落盘是原文 */
 function toFile(route) {
-  if (route === '/') return 'index.html'
+  const decoded = decodeURIComponent(route)
+  if (decoded === '/') return 'index.html'
+  route = decoded
   if (/\.(html|json|xml|txt)$/.test(route)) return route.slice(1)
   return `${route.replace(/^\//, '')}.html`
 }
