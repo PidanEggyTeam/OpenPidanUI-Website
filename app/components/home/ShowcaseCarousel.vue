@@ -154,7 +154,7 @@ watch(index, (value) => preload(value));
         class="absolute top-1/2 left-2 -translate-y-1/2 shadow-card"
         icon="i-lucide-chevron-left"
         color="neutral"
-        variant="solid"
+        variant="soft"
         square
         aria-label="上一张"
         @click="step(-1)"
@@ -163,7 +163,7 @@ watch(index, (value) => preload(value));
         class="absolute top-1/2 right-2 -translate-y-1/2 shadow-card"
         icon="i-lucide-chevron-right"
         color="neutral"
-        variant="solid"
+        variant="soft"
         square
         aria-label="下一张"
         @click="step(1)"
