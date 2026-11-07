@@ -78,7 +78,10 @@ const year = new Date().getFullYear();
                 >
                   <span class="flex items-center gap-1">
                     {{ link.label }}
-                    <UIcon name="i-lucide-arrow-up-right" class="size-3 shrink-0 opacity-0 transition-opacity group-hover:opacity-100" />
+                    <UIcon
+                      name="i-lucide-arrow-up-right"
+                      class="size-3 shrink-0 opacity-0 transition-opacity group-hover:opacity-100"
+                    />
                   </span>
                   <span class="text-xs text-dimmed">{{ link.description }}</span>
                 </a>

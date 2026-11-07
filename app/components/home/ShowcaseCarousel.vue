@@ -1,129 +1,146 @@
 <script setup lang="ts">
-import { SHOWCASE_ITEMS } from '~/data/showcase'
+import { SHOWCASE_ITEMS } from '~/data/showcase';
 
-const items = SHOWCASE_ITEMS
-const index = ref(0)
-const dir = ref<'next' | 'prev'>('next')
-const paused = ref(false)
-const reduceMotion = ref(false)
+const items = SHOWCASE_ITEMS;
+const index = ref(0);
+const dir = ref<'next' | 'prev'>('next');
+const paused = ref(false);
+const reduceMotion = ref(false);
 
-let timer: ReturnType<typeof setInterval> | null = null
-let pointerStartX: number | null = null
+let timer: ReturnType<typeof setInterval> | null = null;
+let pointerStartX: number | null = null;
 
-const current = computed(() => items[index.value]!)
+const current = computed(() => items[index.value]!);
 
 function start() {
-  stop()
-  if (reduceMotion.value || paused.value || items.length < 2) return
-  timer = setInterval(() => step(1, true), 6000)
+  stop();
+  if (reduceMotion.value || paused.value || items.length < 2) return;
+  timer = setInterval(() => step(1, true), 6000);
 }
 
 function stop() {
   if (timer) {
-    clearInterval(timer)
-    timer = null
+    clearInterval(timer);
+    timer = null;
   }
 }
 
 function restart() {
-  stop()
-  start()
+  stop();
+  start();
 }
 
 function step(delta: 1 | -1, auto = false) {
-  dir.value = delta > 0 ? 'next' : 'prev'
-  index.value = (index.value + delta + items.length) % items.length
+  dir.value = delta > 0 ? 'next' : 'prev';
+  index.value = (index.value + delta + items.length) % items.length;
   // 手动翻页后停止自动播放（WCAG 2.2.2：用户操作后不应继续自动移动）
   if (!auto) {
-    paused.value = true
-    stop()
+    paused.value = true;
+    stop();
   }
 }
 
 function goTo(target: number) {
-  if (target === index.value) return
-  dir.value = target > index.value ? 'next' : 'prev'
-  index.value = target
-  paused.value = true
-  stop()
+  if (target === index.value) return;
+  dir.value = target > index.value ? 'next' : 'prev';
+  index.value = target;
+  paused.value = true;
+  stop();
 }
 
 function onKeydown(event: KeyboardEvent) {
   if (event.key === 'ArrowLeft') {
-    event.preventDefault()
-    step(-1)
+    event.preventDefault();
+    step(-1);
   } else if (event.key === 'ArrowRight') {
-    event.preventDefault()
-    step(1)
+    event.preventDefault();
+    step(1);
   } else if (event.key === 'Home') {
-    event.preventDefault()
-    goTo(0)
+    event.preventDefault();
+    goTo(0);
   } else if (event.key === 'End') {
-    event.preventDefault()
-    goTo(items.length - 1)
+    event.preventDefault();
+    goTo(items.length - 1);
   }
 }
 
 function onPointerDown(event: PointerEvent) {
-  pointerStartX = event.clientX
+  pointerStartX = event.clientX;
 }
 
 function onPointerUp(event: PointerEvent) {
-  if (pointerStartX === null) return
-  const delta = event.clientX - pointerStartX
-  pointerStartX = null
-  if (Math.abs(delta) < 40) return
-  step(delta < 0 ? 1 : -1)
+  if (pointerStartX === null) return;
+  const delta = event.clientX - pointerStartX;
+  pointerStartX = null;
+  if (Math.abs(delta) < 40) return;
+  step(delta < 0 ? 1 : -1);
 }
 
 function preload(around: number) {
   for (const offset of [1, -1]) {
-    const item = items[(around + offset + items.length) % items.length]
-    if (!item) continue
-    const img = new Image()
-    img.src = item.image
+    const item = items[(around + offset + items.length) % items.length];
+    if (!item) continue;
+    const img = new Image();
+    img.src = item.image;
   }
 }
 
 function onVisibility() {
-  if (document.hidden) stop()
-  else start()
+  if (document.hidden) stop();
+  else start();
 }
 
 onMounted(() => {
-  reduceMotion.value = window.matchMedia('(prefers-reduced-motion: reduce)').matches
-  start()
-  preload(index.value)
-  document.addEventListener('visibilitychange', onVisibility)
-})
+  reduceMotion.value = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  start();
+  preload(index.value);
+  document.addEventListener('visibilitychange', onVisibility);
+});
 
 onBeforeUnmount(() => {
-  stop()
-  document.removeEventListener('visibilitychange', onVisibility)
-})
+  stop();
+  document.removeEventListener('visibilitychange', onVisibility);
+});
 
-watch(index, value => preload(value))
+watch(index, (value) => preload(value));
 </script>
 
 <template>
   <div
-    class="relative"
+    class="relative mx-auto w-full max-w-3xl"
     role="region"
     aria-roledescription="轮播"
     aria-label="组件截图"
     tabindex="0"
     @keydown="onKeydown"
-    @mouseenter="paused = true; stop()"
-    @mouseleave="paused = false; start()"
-    @focusin="paused = true; stop()"
-    @focusout="paused = false; start()"
+    @mouseenter="
+      paused = true;
+      stop();
+    "
+    @mouseleave="
+      paused = false;
+      start();
+    "
+    @focusin="
+      paused = true;
+      stop();
+    "
+    @focusout="
+      paused = false;
+      start();
+    "
     @pointerdown="onPointerDown"
     @pointerup="onPointerUp"
   >
     <!-- 固定画框：容器高度只由 aspect 决定，与图片原始比例无关，切图不跳 -->
-    <div class="relative aspect-[16/10] w-full overflow-hidden rounded-xl border border-default bg-elevated">
+    <div
+      class="relative aspect-[16/10] w-full overflow-hidden rounded-xl border border-default bg-elevated"
+    >
       <Transition :name="`slide-${dir}`" mode="out-in">
-        <figure :key="current!.id" class="absolute inset-0 flex flex-col items-center justify-center p-3 sm:p-5">
+        <figure
+          :key="current!.id"
+          class="absolute inset-0 flex flex-col items-center justify-center p-3 sm:p-5"
+        >
           <img
             :src="current!.image"
             :width="current!.width"
@@ -133,7 +150,7 @@ watch(index, value => preload(value))
             :fetchpriority="index === 0 ? 'high' : 'auto'"
             loading="lazy"
             decoding="async"
-          >
+          />
         </figure>
       </Transition>
 
@@ -156,7 +173,6 @@ watch(index, value => preload(value))
         aria-label="下一张"
         @click="step(1)"
       />
-
     </div>
 
     <!-- 说明与指示点 -->
@@ -175,7 +191,9 @@ watch(index, value => preload(value))
           :aria-selected="i === index"
           :aria-label="`第 ${i + 1} 张：${item.title}`"
           class="h-2 rounded-full transition-all"
-          :class="i === index ? 'w-6 bg-primary' : 'w-2 bg-elevated ring-1 ring-default hover:bg-accented'"
+          :class="
+            i === index ? 'w-6 bg-primary' : 'w-2 bg-elevated ring-1 ring-default hover:bg-accented'
+          "
           @click="goTo(i)"
         />
       </div>
