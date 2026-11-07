@@ -121,7 +121,7 @@ watch(index, value => preload(value))
     @pointerup="onPointerUp"
   >
     <!-- 固定画框：容器高度只由 aspect 决定，与图片原始比例无关，切图不跳 -->
-    <div class="relative aspect-16/10 w-full overflow-hidden rounded-xl border border-default bg-elevated">
+    <div class="relative aspect-[16/10] w-full overflow-hidden rounded-xl border border-default bg-elevated">
       <Transition :name="`slide-${dir}`" mode="out-in">
         <figure :key="current!.id" class="absolute inset-0 flex flex-col items-center justify-center p-3 sm:p-5">
           <img
