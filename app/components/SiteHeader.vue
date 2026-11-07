@@ -62,7 +62,8 @@ onBeforeUnmount(() => document.removeEventListener('keydown', onKeydown));
       </span>
     </template>
 
-    <UNavigationMenu :items="menuItems" highlight />
+    <!-- 导航元素尺寸与 PidanUI 官网对齐：桌面端导航菜单放大到 lg -->
+    <UNavigationMenu :items="menuItems" highlight size="lg" />
 
     <template #right>
       <ThemeToggle />
@@ -71,6 +72,7 @@ onBeforeUnmount(() => document.removeEventListener('keydown', onKeydown));
         variant="ghost"
         color="neutral"
         square
+        size="lg"
         :icon="mobileOpen ? 'i-lucide-x' : 'i-lucide-menu'"
         :aria-label="mobileOpen ? '关闭主导航' : '打开主导航'"
         :aria-expanded="mobileOpen"
@@ -89,7 +91,7 @@ onBeforeUnmount(() => document.removeEventListener('keydown', onKeydown));
         :inert="!mobileOpen"
       >
         <div class="min-h-0 overflow-hidden">
-          <UNavigationMenu orientation="vertical" :items="menuItems" class="p-2" />
+          <UNavigationMenu orientation="vertical" :items="menuItems" size="lg" class="p-2" />
         </div>
       </div>
     </template>
