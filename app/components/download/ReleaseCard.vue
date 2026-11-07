@@ -1,11 +1,11 @@
 <script setup lang="ts">
-import type { SiteRelease } from '#shared/releases'
+import type { SiteRelease } from '#shared/releases';
 
 defineProps<{
-  release: SiteRelease
+  release: SiteRelease;
   /** 最新版用大卡片，历史版本用紧凑卡片 */
-  featured?: boolean
-}>()
+  featured?: boolean;
+}>();
 </script>
 
 <template>
@@ -14,7 +14,9 @@ defineProps<{
       <div class="min-w-0">
         <div class="flex flex-wrap items-center gap-2">
           <h3 class="text-lg font-semibold text-highlighted">{{ release.name }}</h3>
-          <UBadge v-if="release.prerelease" color="warning" variant="subtle" size="sm">测试版</UBadge>
+          <UBadge v-if="release.prerelease" color="neutral" variant="subtle" size="sm"
+            >测试版</UBadge
+          >
           <UBadge v-else color="primary" variant="subtle" size="sm">稳定版</UBadge>
         </div>
         <p class="mt-1 flex flex-wrap items-center gap-x-3 gap-y-1 text-xs text-dimmed">
@@ -40,7 +42,9 @@ defineProps<{
 
     <div class="mt-5 space-y-2">
       <AssetRow v-for="asset in release.assets" :key="asset.name" :asset="asset" />
-      <p v-if="!release.assets.length" class="text-sm text-dimmed">这个版本没有可下载的资产文件。</p>
+      <p v-if="!release.assets.length" class="text-sm text-dimmed">
+        这个版本没有可下载的资产文件。
+      </p>
     </div>
   </UCard>
 </template>

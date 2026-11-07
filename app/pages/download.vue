@@ -1,18 +1,18 @@
 <script setup lang="ts">
-import { SITE } from '#shared/site'
+import { SITE } from '#shared/site';
 
 useSeoMeta({
   title: '下载',
   description: '下载 OpenPidanUI 的 Rainmeter 小组件与配套设置程序。当前版本来自 GitHub Releases。',
-})
+});
 
-const { payload, latest, others } = useReleases()
+const { payload, latest, others } = useReleases();
 
 const requirements = [
   { icon: 'i-lucide-hard-drive-download', label: 'Windows 10 及以上' },
   { icon: 'i-lucide-package', label: '需先安装 Rainmeter' },
   { icon: 'i-lucide-shield-check', label: '卸载＝切回默认主题' },
-]
+];
 </script>
 
 <template>
@@ -22,11 +22,11 @@ const requirements = [
       description="目前只提供 Rainmeter 小组件及其设置程序。版本数据在构建时从 GitHub Releases 拉取，页面不做运行时请求。"
     />
 
-    <div class="mx-auto w-full max-w-page px-4 py-10 sm:px-6">
+    <div class="pb-4">
       <UAlert
         v-if="payload.source === 'snapshot'"
         class="mb-6"
-        color="warning"
+        color="primary"
         variant="subtle"
         icon="i-lucide-circle-alert"
         title="当前展示的是构建时快照"
@@ -43,9 +43,18 @@ const requirements = [
           <ReleaseCard v-for="release in others" :key="release.tag" :release="release" />
         </section>
 
-        <div v-else-if="payload.releases.length === 0" class="rounded-xl border border-default p-8 text-center">
+        <div
+          v-else-if="payload.releases.length === 0"
+          class="rounded-xl border border-default p-8 text-center"
+        >
           <p class="text-sm text-muted">仓库目前还没有 Release。</p>
-          <UButton :to="`${SITE.repoUrl}/releases`" target="_blank" rel="noopener noreferrer" class="mt-4" variant="soft">
+          <UButton
+            :to="`${SITE.repoUrl}/releases`"
+            target="_blank"
+            rel="noopener noreferrer"
+            class="mt-4"
+            variant="soft"
+          >
             去 Releases 页面看看
           </UButton>
         </div>
@@ -65,16 +74,28 @@ const requirements = [
           </span>
         </div>
         <p class="mt-4 max-w-2xl text-sm leading-relaxed text-muted">
-          组件不替换 <code class="rounded bg-elevated px-1 font-mono text-xs">imageres.dll.mun</code> 等系统文件，
-          所有改动都在主题包与 Rainmeter 皮肤目录里；想还原，切回默认主题即可。
+          组件不替换
+          <code class="rounded bg-elevated px-1 font-mono text-xs">imageres.dll.mun</code>
+          等系统文件， 所有改动都在主题包与 Rainmeter 皮肤目录里；想还原，切回默认主题即可。
         </p>
-        <UButton :to="withBase('/docs/user/install-rainmeter')" variant="link" class="mt-2 px-0" trailing-icon="i-lucide-arrow-right">
+        <UButton
+          :to="withBase('/docs/user/install-rainmeter')"
+          variant="link"
+          class="mt-2 px-0"
+          trailing-icon="i-lucide-arrow-right"
+        >
           去读安装文档
         </UButton>
       </section>
 
       <p class="mt-10 text-xs text-dimmed">
-        数据来源：<a :href="`${SITE.repoUrl}/releases`" target="_blank" rel="noopener noreferrer" class="underline">GitHub Releases</a>
+        数据来源：<a
+          :href="`${SITE.repoUrl}/releases`"
+          target="_blank"
+          rel="noopener noreferrer"
+          class="underline"
+          >GitHub Releases</a
+        >
         · 目标仓库 <code class="font-mono">{{ SITE.repo }}</code>
       </p>
     </div>

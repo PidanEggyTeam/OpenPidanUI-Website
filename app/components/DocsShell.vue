@@ -6,38 +6,42 @@
  * 目录顺序以 frontmatter 的 `order` 为准：@nuxt/content 生成的 navigation 按文件系统排，
  * 这里用 order 映射把它纠正回来（分类组之间按 DOC_CATEGORIES 的 order）。
  */
-import type { ContentNavigationItem } from '@nuxt/content'
+import type { ContentNavigationItem } from '@nuxt/content';
 
 defineProps<{
-  tocLinks?: { id: string, text: string, depth: number }[]
-  showToc?: boolean
-}>()
+  tocLinks?: { id: string; text: string; depth: number }[];
+  showToc?: boolean;
+}>();
 
-const navigation = inject<Ref<ContentNavigationItem[] | null>>('navigation')
-const { navRank } = await useDocsGroups()
-const open = ref(false)
+const navigation = inject<Ref<ContentNavigationItem[] | null>>('navigation');
+const { navRank } = await useDocsGroups();
+const open = ref(false);
 
 function sortItems(items: ContentNavigationItem[]): ContentNavigationItem[] {
   return [...items]
-    .map(item => (item.children?.length ? { ...item, children: sortItems(item.children) } : item))
+    .map((item) => (item.children?.length ? { ...item, children: sortItems(item.children) } : item))
     .sort((a, b) => {
       // 叶子节点用 navRank（分类权重 * 1000 + 组内 order）；分组节点取组内最小 rank
       const rank = (node: ContentNavigationItem) => {
         if (node.children?.length) {
-          return Math.min(...node.children.map(child => navRank.value[child.path ?? ''] ?? 999999))
+          return Math.min(
+            ...node.children.map((child) => navRank.value[child.path ?? ''] ?? 999999),
+          );
         }
-        return navRank.value[node.path ?? ''] ?? 999999
-      }
-      return rank(a) - rank(b)
-    })
+        return navRank.value[node.path ?? ''] ?? 999999;
+      };
+      return rank(a) - rank(b);
+    });
 }
 
-const sortedNavigation = computed(() => sortItems(navigation.value ?? []))
+const sortedNavigation = computed(() => sortItems(navigation.value ?? []));
 </script>
 
 <template>
-  <div class="mx-auto w-full max-w-page px-4 py-8 sm:px-6 lg:py-12">
-    <div class="lg:grid lg:grid-cols-[240px_minmax(0,1fr)] lg:gap-10 xl:grid-cols-[240px_minmax(0,1fr)_200px]">
+  <div class="w-full">
+    <div
+      class="lg:grid lg:grid-cols-[240px_minmax(0,1fr)] lg:gap-10 xl:grid-cols-[240px_minmax(0,1fr)_200px]"
+    >
       <!-- 桌面左侧目录 -->
       <aside class="hidden lg:block">
         <div class="sticky top-20 max-h-[calc(100vh-6rem)] overflow-y-auto pr-2">

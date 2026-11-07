@@ -1,10 +1,11 @@
 <script setup lang="ts">
 useSeoMeta({
   title: '文档',
-  description: 'OpenPidanUI 文档：安装 Rainmeter、导入小组件、组件设置，以及仓库结构、构建调试与发版流程。',
-})
+  description:
+    'OpenPidanUI 文档：安装 Rainmeter、导入小组件、组件设置，以及仓库结构、构建调试与发版流程。',
+});
 
-const { groups } = await useDocsGroups()
+const { groups } = await useDocsGroups();
 </script>
 
 <template>
@@ -14,7 +15,7 @@ const { groups } = await useDocsGroups()
       description="按用途分成两类：左边给使用者，右边给想改代码的人。第一次来建议从「安装 Rainmeter」开始。"
     />
 
-    <div class="mx-auto w-full max-w-page px-4 py-10 sm:px-6">
+    <div class="pb-4">
       <DocsGroupCards :groups="groups" />
 
       <UAlert

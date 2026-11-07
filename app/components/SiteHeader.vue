@@ -1,97 +1,96 @@
 <script setup lang="ts">
-import { NAV_ITEMS } from '~/data/nav'
+import { NAV_ITEMS } from '~/data/nav';
+import { SITE } from '#shared/site';
 
-const activeKey = useActiveNavKey()
-const route = useRoute()
-const open = ref(false)
+// 全站顶栏：品牌 + 桌面横排导航 + 主题 / 汉堡（与 PidanUI 官网同构）。
+// 移动端（< lg 即 < 1024px）导航收进顶栏正下方的绝对定位面板——
+// 刻意不用 USlideover / UDrawer：那不是抽屉，不锁滚动，也没有边缘手势。
+const activeKey = useActiveNavKey();
+const route = useRoute();
+const mobileOpen = ref(false);
 
-watch(() => route.fullPath, () => { open.value = false })
+const menuItems = computed(() =>
+  NAV_ITEMS.map((item) => ({
+    label: item.label,
+    icon: item.icon,
+    to: item.external ? item.href : withBase(item.href),
+    target: item.external ? '_blank' : undefined,
+    rel: item.external ? 'noopener noreferrer' : undefined,
+    trailingIcon: item.external ? (item.trailingIcon ?? 'i-lucide-arrow-up-right') : undefined,
+    // 外链永不参与高亮
+    active: !item.external && activeKey.value === item.key,
+  })),
+);
+
+watch(
+  () => route.fullPath,
+  () => {
+    mobileOpen.value = false;
+  },
+);
 
 function onKeydown(event: KeyboardEvent) {
-  if (event.key === 'Escape') open.value = false
+  if (event.key === 'Escape' && mobileOpen.value) mobileOpen.value = false;
 }
 
-onMounted(() => window.addEventListener('keydown', onKeydown))
-onBeforeUnmount(() => window.removeEventListener('keydown', onKeydown))
+onMounted(() => document.addEventListener('keydown', onKeydown));
+onBeforeUnmount(() => document.removeEventListener('keydown', onKeydown));
 </script>
 
 <template>
-  <header class="sticky top-0 z-40 border-b border-default bg-default/85 backdrop-blur">
-    <div class="mx-auto flex h-16 w-full max-w-page items-center gap-3 px-4 sm:px-6">
-      <NuxtLink :to="withBase('/')" class="flex shrink-0 items-center gap-2" aria-label="回到首页">
-        <img src="/images/logo.webp" alt="" width="32" height="32" class="h-8 w-8 rounded-lg">
-        <span class="text-base font-semibold tracking-tight text-highlighted">OpenPidanUI</span>
-      </NuxtLink>
-
-      <nav class="ml-4 hidden items-center gap-1 lg:flex" aria-label="主导航">
-        <template v-for="item in NAV_ITEMS" :key="item.key">
-          <a
-            v-if="item.external"
-            :href="item.href"
-            target="_blank"
-            rel="noopener noreferrer"
-            class="inline-flex items-center gap-1 rounded-md px-3 py-2 text-sm text-muted transition-colors hover:bg-elevated hover:text-highlighted"
-          >
-            {{ item.label }}
-            <UIcon :name="item.trailingIcon ?? 'i-lucide-arrow-up-right'" class="size-3.5" />
-          </a>
-          <NuxtLink
-            v-else
-            :to="withBase(item.href)"
-            class="inline-flex items-center rounded-md px-3 py-2 text-sm transition-colors hover:bg-elevated hover:text-highlighted"
-            :class="activeKey === item.key ? 'bg-elevated text-highlighted' : 'text-muted'"
-          >
-            {{ item.label }}
-          </NuxtLink>
-        </template>
-      </nav>
-
-      <div class="ml-auto flex items-center gap-2">
-        <ThemeToggle />
-        <UButton
-          class="lg:hidden"
-          :icon="open ? 'i-lucide-x' : 'i-lucide-menu'"
-          color="neutral"
-          variant="ghost"
-          :aria-expanded="open"
-          aria-controls="mobile-nav"
-          aria-label="切换导航"
-          @click="open = !open"
+  <UHeader
+    :toggle="false"
+    :title="SITE.brand"
+    to="/"
+    :ui="{ container: 'max-w-none px-4 sm:px-6 lg:px-8', right: 'flex items-center gap-1' }"
+  >
+    <!-- UHeader 的 #title 插槽本身是 flex items-end（图标贴底对齐），
+         直接把图片与文字塞进去会基线错位；包一层让内部垂直居中。 -->
+    <template #title>
+      <span class="flex items-center gap-2">
+        <img
+          class="size-8 shrink-0 rounded-lg object-contain"
+          :src="withBase('/images/logo.webp')"
+          :alt="SITE.brand"
+          width="32"
+          height="32"
+          decoding="async"
+          fetchpriority="high"
         />
-      </div>
-    </div>
+        <span>{{ SITE.brand }}</span>
+      </span>
+    </template>
 
-    <!-- 移动端导航：顶栏下方面板（不用 Drawer） -->
-    <div
-      id="mobile-nav"
-      class="grid overflow-hidden border-t border-default transition-[grid-template-rows] duration-300 lg:hidden"
-      :class="open ? 'grid-rows-[1fr]' : 'grid-rows-[0fr]'"
-      :inert="!open"
-    >
-      <div class="min-h-0 overflow-hidden">
-        <nav class="mx-auto flex w-full max-w-page flex-col gap-1 px-4 py-3" aria-label="移动端导航">
-          <template v-for="item in NAV_ITEMS" :key="item.key">
-            <a
-              v-if="item.external"
-              :href="item.href"
-              target="_blank"
-              rel="noopener noreferrer"
-              class="flex items-center justify-between rounded-md px-3 py-2.5 text-sm text-muted hover:bg-elevated"
-            >
-              {{ item.label }}
-              <UIcon :name="item.trailingIcon ?? 'i-lucide-arrow-up-right'" class="size-4" />
-            </a>
-            <NuxtLink
-              v-else
-              :to="withBase(item.href)"
-              class="rounded-md px-3 py-2.5 text-sm hover:bg-elevated"
-              :class="activeKey === item.key ? 'bg-elevated text-highlighted' : 'text-muted'"
-            >
-              {{ item.label }}
-            </NuxtLink>
-          </template>
-        </nav>
+    <UNavigationMenu :items="menuItems" highlight />
+
+    <template #right>
+      <ThemeToggle />
+      <UButton
+        class="lg:hidden"
+        variant="ghost"
+        color="neutral"
+        square
+        :icon="mobileOpen ? 'i-lucide-x' : 'i-lucide-menu'"
+        :aria-label="mobileOpen ? '关闭主导航' : '打开主导航'"
+        :aria-expanded="mobileOpen"
+        aria-controls="site-mobile-nav"
+        @click="mobileOpen = !mobileOpen"
+      />
+    </template>
+
+    <!-- 顶栏正下方的下拉面板：绝对定位，不撑高 sticky header，因此滚动不跳动。
+         收起态用 grid-rows-[0fr] + inert：内容不占位、也不进键盘 Tab 序列。 -->
+    <template #bottom>
+      <div
+        id="site-mobile-nav"
+        class="absolute inset-x-0 top-full grid overflow-hidden border-b border-default bg-default shadow-lg transition-[grid-template-rows] duration-300 lg:hidden"
+        :class="mobileOpen ? 'grid-rows-[1fr]' : 'grid-rows-[0fr]'"
+        :inert="!mobileOpen"
+      >
+        <div class="min-h-0 overflow-hidden">
+          <UNavigationMenu orientation="vertical" :items="menuItems" class="p-2" />
+        </div>
       </div>
-    </div>
-  </header>
+    </template>
+  </UHeader>
 </template>
