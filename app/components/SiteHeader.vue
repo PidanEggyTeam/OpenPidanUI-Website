@@ -47,7 +47,7 @@ onBeforeUnmount(() => window.removeEventListener('keydown', onKeydown))
       </nav>
 
       <div class="ml-auto flex items-center gap-2">
-        <UColorModeButton />
+        <ThemeToggle />
         <UButton
           class="lg:hidden"
           :icon="open ? 'i-lucide-x' : 'i-lucide-menu'"

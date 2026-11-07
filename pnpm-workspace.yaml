@@ -1,12 +1,22 @@
-# Tailwind 的包族在 Windows 默认 isolated 布局下会出现「只链一半」，改扁平布局规避。
+# 布局与 PidanUI 官网一致：扁平 node_modules（hoisted）。
+# Windows 默认的 isolated 布局下，Tailwind 的包族（@tailwindcss/node、@tailwindcss/oxide …）
+# 会出现「只链了一半」的问题（顶层只有空壳目录、传递依赖缺失）；hoisted 在 Linux/CI 上行为一致。
 nodeLinker: hoisted
 
-# pnpm 12 用 allowBuilds 放行依赖的 postinstall，否则 esbuild / workerd 二进制装不全，
-# nuxi generate 与 wrangler 都会在运行期报"找不到可执行文件"。
+# pnpm 12 对「装了但没放行 postinstall」的依赖是**报错**而不是警告（ERR_PNPM_IGNORED_BUILDS），
+# 而且不同平台装到的原生包不一样 —— 少写一个，本地能装、CI 就红。
+# ⚠ 这张表要覆盖所有带 install 脚本的依赖，包括只在 Linux 上才装到的：
+#   esbuild / @parcel/watcher / better-sqlite3 / vue-demi  基础四件
+#   workerd             wrangler 的运行时，本地 preview 用
+#   lightningcss        Tailwind 4 的 CSS 处理（Linux 上是独立原生包）
+#   @tailwindcss/oxide  Tailwind 4 的扫描器（Linux 上是独立原生包，CI 报错就是它）
+#   sharp               图片处理的后备依赖
 allowBuilds:
   esbuild: true
-  workerd: true
-  vue-demi: true
-  # @nuxt/content 的构建期数据库
+  '@parcel/watcher': true
   better-sqlite3: true
+  vue-demi: true
+  workerd: true
+  lightningcss: true
+  '@tailwindcss/oxide': true
   sharp: true

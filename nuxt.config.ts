@@ -76,6 +76,7 @@ export default defineNuxtConfig({
         'lucide:list',
         'lucide:code-xml',
         'lucide:sun',
+        'lucide:sun-moon',
         'lucide:moon',
         'lucide:menu',
         'lucide:x',
