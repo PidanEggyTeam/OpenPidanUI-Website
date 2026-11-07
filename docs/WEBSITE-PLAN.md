@@ -653,3 +653,25 @@ export function buildRoutes(): string[] {
 | 技术栈 | 「Nuxt 4 + Tailwind 4 + Nuxt UI v4 + Content v3，Cloudflare Workers」 | 补版本锚点、`nitro.preset:'static'`、assets-only 部署形态、字体灌注方案 | 选型需要落到可执行的配置 |
 | 文档落点 | 「项目文件夹 `OpenPidanUI_Website`」 | 实际仓库为 `D:\TestProject\OpenPidanUI-Website`（下划线→连字符） | 以真实目录为准 |
 | 许可证 | 未提 | 全文统一 AGPL-3.0（与仓库 `LICENSE` 一致） | 消除三处口径冲突 |
+
+---
+
+## 附录 B：实施状态（2026-11-07）
+
+| 里程碑 | 状态 | 说明 |
+| --- | --- | --- |
+| M0 工程骨架 | ✅ | Nuxt 4.6.4 / Nuxt UI 4.12 / Content 3.16 / Tailwind 4.3，pnpm + `nuxi generate` |
+| M1 外壳与 404 | ✅ | 顶栏（含移动端下方面板）、底栏三栏、回到顶部、深浅色、404 页 |
+| M2 首页五区块 | ✅ | Hero / 特性 6 卡 / 轮播（左右键+指示点+键盘+触摸+自动播放）/ 关于 / 加入开发 |
+| M3 文档站 | ✅ | 两级分类 + 分类页 + 左目录/右 TOC/上下篇；8 篇正文；分类由 frontmatter 自由命名 |
+| M4 下载页 | ✅ | 构建期抓 Releases → `/api/releases.json`；断网自动回退快照（已验证走的是快照分支） |
+| M5 字体与缓存 | ✅ | HarmonyOS 3 字重 / 246 分片构建后灌注；`_headers` 长缓存；图标服务端内联 |
+| M6 部署 | 🟡 | `wrangler.jsonc` 已按 assets-only 写好，`wrangler deploy --dry-run` 通过（读取 426 个文件）；实际发布需补 `CLOUDFLARE_API_TOKEN` / 账号 |
+
+验收：`pnpm build` 全绿，17 条预渲染路由逐条断言有产物。
+
+待办：
+1. 站点域名确认后更新 `shared/site.ts` 的 `mainUrl` 与 `wrangler.jsonc` 的 `routes`；
+2. 占位截图替换为图床 CDN 图（改 `app/data/showcase.ts` 的 `image` 即可）；
+3. 首次执行 `wrangler deploy` 前配置 Cloudflare 凭据；
+4. 友链清单（`app/data/socialLinks.ts` 的 `FRIEND_LINKS`）。
