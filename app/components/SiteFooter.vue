@@ -44,32 +44,11 @@ const year: string = '2026';
             </nav>
           </div>
 
-          <!-- 关注我们 -->
-          <div class="min-w-0">
-            <h2 class="mb-3 text-[13px] font-bold tracking-[0.5px] text-dimmed uppercase">
-              关注我们
-            </h2>
-            <div class="grid gap-2 sm:grid-cols-2 lg:grid-cols-1">
-              <a
-                v-for="link in SOCIAL_LINKS"
-                :key="link.key"
-                class="flex items-center gap-2.5 rounded-lg border border-default px-2.5 py-2 text-sm text-toned transition-colors hover:border-brand-600/35 hover:text-brand-600"
-                :href="link.href"
-                target="_blank"
-                rel="noopener noreferrer"
-              >
-                <UIcon :name="link.icon" class="size-4 shrink-0" aria-hidden="true" />
-                <span class="truncate">{{ link.label }}</span>
-              </a>
-            </div>
-          </div>
-
-          <!-- 友情链接 -->
-          <div class="min-w-0">
+          <div class="min-w-0 lg:col-span-2">
             <h2 class="mb-3 text-[13px] font-bold tracking-[0.5px] text-dimmed uppercase">
               友情链接
             </h2>
-            <div class="grid gap-2 sm:grid-cols-2 lg:grid-cols-1">
+            <div class="grid gap-2 sm:grid-cols-2 lg:grid-cols-3">
               <a
                 v-for="link in FRIEND_LINKS"
                 :key="link.key"
@@ -91,6 +70,20 @@ const year: string = '2026';
       <p class="text-sm leading-relaxed text-dimmed">
         © {{ year }} {{ SITE.brand }} · 本项目为《蛋仔派对》同人创作，非《蛋仔派对》官方出品。
       </p>
+    </template>
+
+    <template #right>
+      <!-- 社交图标 -->
+      <UButton
+        v-for="link in SOCIAL_LINKS"
+        :key="link.href"
+        :to="link.href"
+        target="_blank"
+        :icon="link.icon"
+        size="lg"
+        variant="ghost"
+        color="neutral"
+      />
     </template>
   </UFooter>
 </template>
