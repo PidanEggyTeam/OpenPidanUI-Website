@@ -31,7 +31,7 @@ const routes = buildRoutes();
 const missing = routes.filter((route) => !existsSync(join(PUBLIC_DIR, toFile(route))));
 
 if (missing.length) {
-  console.error(`[verify] ${missing.length} 条路由没有产物：`);
+  failures.push(`${missing.length} 条路由没有产物：`);
   for (const route of missing) console.error(`  - ${route}  (期望 ${toFile(route)})`);
   process.exit(1);
 }
@@ -57,11 +57,30 @@ if (!existsSync(sitemapFile)) {
 // 顺手断言不该存在的东西：cloudflare-module 预设会带来 Worker 入口
 for (const stale of ['server', '_worker.js']) {
   if (existsSync(join(PUBLIC_DIR, stale))) {
-    console.error(
-      `[verify] 产物里出现了 ${stale}：说明 Nitro 没用 static 预设，wrangler deploy 会失败`,
-    );
+    failures.push(`产物里出现了 ${stale}：说明 Nitro 没用 static 预设`);
     process.exit(1);
   }
+}
+
+// 字体自包含：sync-fonts.mjs 必须产出本地样式表，且页面不能再引用字体 CDN
+if (!existsSync(join(PUBLIC_DIR, 'fonts', 'harmonyos.css'))) {
+  failures.push('缺少 fonts/harmonyos.css：sync-fonts.mjs 没有执行或执行失败');
+}
+const homeFile = join(PUBLIC_DIR, 'index.html');
+if (existsSync(homeFile)) {
+  const home = readFileSync(homeFile, 'utf8');
+  if (home.includes('cdn.jsdelivr.net')) {
+    failures.push('首页仍在引用字体 CDN，字体没有真正自包含');
+  }
+  if (!home.includes('/fonts/harmonyos.css')) {
+    failures.push('首页没有引用 /fonts/harmonyos.css');
+  }
+}
+
+if (failures.length) {
+  console.error('[verify] 产物校验失败：');
+  for (const line of failures) console.error(line);
+  process.exit(1);
 }
 
 console.log(
