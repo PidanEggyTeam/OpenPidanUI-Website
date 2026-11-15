@@ -26,6 +26,7 @@ if (!existsSync(PUBLIC_DIR)) {
   process.exit(1);
 }
 
+const failures = [];
 const routes = buildRoutes();
 const missing = routes.filter((route) => !existsSync(join(PUBLIC_DIR, toFile(route))));
 
@@ -63,4 +64,6 @@ for (const stale of ['server', '_worker.js']) {
   }
 }
 
-console.log(`[verify] ${routes.length} 条路由全部有产物 ✓ sitemap ${buildSitemapRoutes().length} 页 ✓ 字体自包含 / 静态预设`);
+console.log(
+  `[verify] ${routes.length} 条路由全部有产物 ✓ sitemap ${buildSitemapRoutes().length} 页 ✓ 字体自包含 / 静态预设`,
+);
