@@ -55,3 +55,14 @@ export function buildRoutes(): string[] {
     .map((name) => `/docs/category/${encodeURIComponent(name)}`);
   return [...base, ...result.routes, ...categoryRoutes];
 }
+
+/** 可被搜索引擎收录的站点页面，不包含搜索、错误页、接口与订阅源。 */
+export function buildSitemapRoutes(): string[] {
+  return buildRoutes().filter(
+    (route) =>
+      route !== '/search/' &&
+      route !== '/404.html' &&
+      !route.startsWith('/api/') &&
+      !/\.(xml|json)$/.test(route),
+  );
+}

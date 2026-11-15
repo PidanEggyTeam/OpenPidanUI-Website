@@ -4,10 +4,11 @@
  * `prerender.failOnError: true` 只能抓「枚举了但渲染报错」，抓不到「该枚举却漏了」——
  * 漏页在线上就是 404，而构建会显示成功。所以在 nuxi generate 之后逐条对账。
  */
-import { existsSync } from 'node:fs';
+import { existsSync, readFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { buildRoutes } from '../build/routes.ts';
+import { buildRoutes, buildSitemapRoutes } from '../build/routes.ts';
+import { SITE } from '../shared/site.ts';
 
 const PUBLIC_DIR = fileURLToPath(new URL('../.output/public', import.meta.url));
 
@@ -15,9 +16,9 @@ const PUBLIC_DIR = fileURLToPath(new URL('../.output/public', import.meta.url));
 function toFile(route) {
   const decoded = decodeURIComponent(route);
   if (decoded === '/') return 'index.html';
-  route = decoded;
-  if (/\.(html|json|xml|txt)$/.test(route)) return route.slice(1);
-  return `${route.replace(/^\//, '')}.html`;
+  if (/\.(html|json|xml|txt|ico|svg)$/.test(decoded)) return decoded.slice(1);
+  if (decoded.endsWith('/')) return `${decoded.slice(1)}index.html`;
+  return `${decoded.slice(1)}.html`;
 }
 
 if (!existsSync(PUBLIC_DIR)) {
@@ -34,6 +35,24 @@ if (missing.length) {
   process.exit(1);
 }
 
+const sitemapFile = join(PUBLIC_DIR, 'sitemap.xml');
+if (!existsSync(sitemapFile)) {
+  failures.push('缺少 sitemap.xml：构建期网站地图没有生成');
+} else {
+  const sitemap = readFileSync(sitemapFile, 'utf8');
+  const urls = [...sitemap.matchAll(/<loc>(.*?)<\/loc>/g)].map(([, url]) => url);
+  const expectedUrls = buildSitemapRoutes().map((route) => new URL(route, `${SITE.mainUrl}/`).href);
+  if (!sitemap.includes('<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">')) {
+    failures.push('sitemap.xml 缺少 sitemap.org 标准 urlset 根节点');
+  }
+  if (
+    urls.length !== expectedUrls.length ||
+    urls.some((url, index) => url !== expectedUrls[index])
+  ) {
+    failures.push('sitemap.xml 中的页面地址与可收录路由不一致');
+  }
+}
+
 // 顺手断言不该存在的东西：cloudflare-module 预设会带来 Worker 入口
 for (const stale of ['server', '_worker.js']) {
   if (existsSync(join(PUBLIC_DIR, stale))) {
@@ -44,4 +63,4 @@ for (const stale of ['server', '_worker.js']) {
   }
 }
 
-console.log(`[verify] ${routes.length} 条路由全部有产物 ✓`);
+console.log(`[verify] ${routes.length} 条路由全部有产物 ✓ sitemap ${buildSitemapRoutes().length} 页 ✓ 字体自包含 / 静态预设`);
