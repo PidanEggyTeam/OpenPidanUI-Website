@@ -29,7 +29,7 @@ const year: string = '2026';
               <span>{{ SITE.brand }}</span>
             </NuxtLink>
             <p class="mt-3 max-w-xs text-sm leading-relaxed text-toned">
-              PidanUI 的辅助组件开源代码库：模块化、可审查、不修改系统文件。
+              PidanUI 的开源辅助组件库，面向 Windows 10 及以上系统。
             </p>
             <nav class="mt-4 flex flex-wrap gap-x-4 gap-y-2" aria-label="页脚导航">
               <NuxtLink
@@ -39,7 +39,7 @@ const year: string = '2026';
                 :to="item.external ? item.href : withBase(item.href)"
                 :target="item.external ? '_blank' : undefined"
                 :rel="item.external ? 'noopener noreferrer' : undefined"
-                >{{ item.label }}</NuxtLink
+                >{{ item.label ?? '友情链接条目' }}</NuxtLink
               >
             </nav>
           </div>

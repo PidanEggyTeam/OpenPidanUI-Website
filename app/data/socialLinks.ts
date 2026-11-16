@@ -14,7 +14,7 @@ export const SOCIAL_LINKS: Link[] = [
   {
     // label: 'GitCode',
     href: 'https://gitcode.com/PidanUI-Team',
-    icon: 'i-lucide-git-branch',
+    icon: 'i-simple-icons-atomgit',
   },
   {
     // label: '哔哩哔哩',
@@ -51,8 +51,13 @@ export const FRIEND_LINKS: Link[] = [
     icon: 'i-simple-icons-windows',
   },
   {
+    label: '红蓝灯的秘密基地',
+    href: 'https://cn-rbl.github.io',
+    icon: 'i-lucide-lightbulb',
+  },
+  {
     label: '冷域观者的个人网站',
     href: 'https://coldfield.skystarlight.top',
-    icon: 'i-lucide-globe',
+    icon: 'i-lucide-snowflake',
   },
 ];

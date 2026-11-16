@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { SHOWCASE_ITEMS } from '~/data/showcase';
+import { SHOWCASE_ITEMS } from '~/data/home';
 
 const items = SHOWCASE_ITEMS;
 const index = ref(0);
@@ -133,14 +133,14 @@ watch(index, (value) => preload(value));
     >
       <Transition :name="`slide-${dir}`" mode="out-in">
         <figure
-          :key="current!.id"
+          :key="current.id ?? `coming-soon-${index}`"
           class="absolute inset-0 flex flex-col items-center justify-center p-3 sm:p-5"
         >
           <img
-            :src="current!.image"
-            :width="current!.width"
-            :height="current!.height"
-            :alt="current!.alt"
+            :src="current.image"
+            :width="current.width ?? 1280"
+            :height="current.height ?? 720"
+            :alt="current.alt ?? '敬请期待'"
             class="max-h-full w-auto max-w-full object-contain"
             :fetchpriority="index === 0 ? 'high' : 'auto'"
             loading="lazy"
@@ -173,14 +173,14 @@ watch(index, (value) => preload(value));
     <!-- 说明与指示点 -->
     <div class="mt-4 flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
       <p class="line-clamp-2 min-h-10 text-sm leading-relaxed text-muted">
-        <span class="font-medium text-highlighted">{{ current!.title }}</span>
-        <span class="mx-1.5 text-dimmed">·</span>{{ current!.caption }}
+        <span class="font-medium text-highlighted">{{ current.title ?? '敬请期待' }}</span>
+        <span class="mx-1.5 text-dimmed">·</span>{{ current.caption ?? '更多功能还在开发中~' }}
       </p>
 
       <div class="flex shrink-0 items-center gap-1.5" role="tablist" aria-label="选择截图">
         <button
           v-for="(item, i) in items"
-          :key="item.id"
+          :key="item.id ?? `coming-soon-${index}`"
           type="button"
           role="tab"
           :aria-selected="i === index"
@@ -195,7 +195,7 @@ watch(index, (value) => preload(value));
     </div>
 
     <p class="sr-only" aria-live="polite">
-      第 {{ index + 1 }} 张，共 {{ items.length }} 张：{{ current!.title }}
+      第 {{ index + 1 }} 张，共 {{ items.length }} 张：{{ current.title ?? '敬请期待' }}
     </p>
   </div>
 </template>

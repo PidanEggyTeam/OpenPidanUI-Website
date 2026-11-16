@@ -31,6 +31,31 @@ export const HOME_FEATURES: FeatureItem[] = [
   },
 ];
 
+export interface ShowcaseItem {
+  id?: string;
+  title?: string;
+  caption?: string;
+  image: string;
+  width?: number;
+  height?: number;
+  alt?: string;
+}
+
+export const SHOWCASE_ITEMS: ShowcaseItem[] = [
+  {
+    id: 'widgets-1',
+    title: 'Rainmeter 小组件演示',
+    caption: '目前这些小组还在完善中。',
+    image: 'https://img.remit.ee/i/UQi9eaPKuGU4',
+    width: 1280,
+    height: 720,
+    alt: '小组件在桌面上的演示画面',
+  },
+  {
+    image: 'https://via.placeholder.com/1920x1080.webp',
+  },
+];
+
 export interface TimelineItem {
   time: string;
   title: string;
@@ -62,8 +87,7 @@ export const ABOUT_TIMELINE: TimelineItem[] = [
 ];
 
 export const ABOUT_TEXT = [
-  'OpenPidanUI 是 PidanUI 的辅助组件开源代码库，存放系统镜像、独立美化包所需的配套组件源代码。',
-  '它不负责替换系统文件，也不做持久化的系统改动——美化交给主题包与 Rainmeter，出问题切回默认主题就能恢复。',
+  'OpenPidanUI 是 PidanUI 的开源辅助组件库，源于当初未能推进的 OpenEggyUI 项目。',
 ];
 
 export interface JoinCard {
@@ -113,7 +137,7 @@ export const JOIN_CARDS: JoinCard[] = [
         label: 'GitCode',
         to: 'https://gitcode.com/PidanUI-Team',
         external: true,
-        icon: 'i-lucide-git-branch',
+        icon: 'i-simple-icons-atomgit',
       },
       { label: '开发者文档', to: '/docs/developer' },
     ],
