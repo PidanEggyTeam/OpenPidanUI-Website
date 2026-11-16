@@ -1,4 +1,4 @@
-# Copilot Instructions
+# AGENTS.md
 
 > 本文件仅适用于 **OpenPidanUI-Website**（OpenPidanUI 官网）仓库，请勿套用到 PidanUI 官网、冷域观者站或其他同族项目——它们虽然共用一套设计语言，外壳与发布链路并不相同。
 

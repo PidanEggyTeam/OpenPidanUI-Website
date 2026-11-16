@@ -1,8 +1,8 @@
 <script setup lang="ts">
 useSeoMeta({
-  title: 'PidanUI 配套组件',
+  title: 'OpenPidanUI 官网',
   description:
-    'OpenPidanUI 是 PidanUI 的辅助组件开源代码库：.NET 10 重写的 Rainmeter 小组件与配套工具，不修改系统文件，卸载只需切回默认主题。',
+    'OpenPidanUI 是《蛋仔派对》风格桌面美化项目 PidanUI 的开源辅助组件库，面向 Windows 10 及以上系统。它的组件和 EggyUI 同源，但在此基础上有所创新。',
 });
 </script>
 
